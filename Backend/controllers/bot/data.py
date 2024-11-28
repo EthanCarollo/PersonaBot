@@ -11,6 +11,33 @@ logger = logging.getLogger("persona_bot")
 bot_data_bp = Blueprint('bot_data_bp', __name__)
 supabase_client: SupabaseClient = SupabaseClient.get_instance()
 
+@bot_data_bp.route('/bot/data', methods=['GET'])
+def get_bot_data():
+    data = request.json
+
+    bot = data.get("bot_public_id")
+    if not bot:
+        return jsonify({"error": "Missing 'bot'"}), 400
+    
+    bot_information = supabase_client.get_bot_with_public_id(bot)
+    if not bot_information :
+        return jsonify({"error": "Bot doesn't exist, weird."}), 400
+
+    chatQueryService : ChatQueryService = ChatQueryService(bot_information.data["bot_public_id"])
+    all_information = chatQueryService.get_all_information()
+
+    response_data = None
+    if isinstance(all_information, list):
+            # Convert each Record in the list to a dictionary
+            response_data = [{ "id": record.id, "payload": json.loads(record.payload["_node_content"])["text"] } for record in all_information]
+       
+    # This route can be called even if the user isn't connected so we retire the token part
+    # token = data.get('token')
+    
+    return jsonify({
+        "response": response_data
+    })
+
 @bot_data_bp.route('/bot/data', methods=['POST'])
 def chat_with_bot():
     data = request.json
