@@ -18,12 +18,16 @@ struct NavBar: View {
                     selectedTab = 0
                 }
                 
-                TabBarButton(imageName: "message", title: "Chat", isSelected: selectedTab == 1) {
+                TabBarButton(imageName: "magnifyingglass", title: "Explorer", isSelected: selectedTab == 1) {
                     selectedTab = 1
                 }
                 
-                TabBarButton(imageName: "person", title: "Compte", isSelected: selectedTab == 2) {
+                TabBarButton(imageName: "message", title: "Chat", isSelected: selectedTab == 2) {
                     selectedTab = 2
+                }
+                
+                TabBarButton(imageName: "person", title: "Compte", isSelected: selectedTab == 3) {
+                    selectedTab = 3
                 }
             }
             .padding(.top, 8)

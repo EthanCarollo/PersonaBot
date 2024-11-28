@@ -7,6 +7,8 @@
 import SwiftUI
 
 struct HomeView: View {
+    @Binding public var selectedTab: Int
+    
     var body: some View {
         ZStack {
             // Background
@@ -65,49 +67,51 @@ struct HomeView: View {
                 Spacer()
                 
                 // Bento grid
-                VStack(spacing: 12) {
-                    // First row
-                    HStack(spacing: 12) {
-                        // Chatter button (wider)
-                        BentoButton(
-                            title: "Chatter",
-                            icon: "message",
-                            destination: AnyView(ChatView()),
-                            width: UIScreen.main.bounds.width * 0.6,
-                            height: 80
-                        )
-                        
-                        // Explorer button
+                VStack {
+                    // Chatter button (wider)
+                    
+                    HStack {
+                        Button(action: {
+                            selectedTab = 2
+                        }) {
+                            VStack(spacing: 8) {
+                                Image(systemName: "message")
+                                    .font(.system(size: 24))
+                                    .foregroundColor(Color.neonGreen)
+                                Text("Chatter")
+                                    .font(.system(size: 14, weight: .medium))
+                                    .foregroundColor(Color.white)
+                            }
+                            .frame(width: UIScreen.main.bounds.width * 0.6, height: 80)
+                            .background(Color.white.opacity(0.1))
+                            .cornerRadius(16)
+                        }
                         BentoButton(
                             title: "Explorer",
                             icon: "magnifyingglass",
-                            destination: AnyView(ExploreView()),
+                            action: { selectedTab = 1 },
                             width: UIScreen.main.bounds.width * 0.3,
                             height: 80
                         )
                     }
-                    
-                    // Second row
-                    HStack(spacing: 12) {
-                        // Créer button
+                    HStack {
                         BentoButton(
                             title: "Créer",
                             icon: "plus.circle",
-                            destination: AnyView(CreateBotView()),
+                            action: { selectedTab = 2 },
                             width: UIScreen.main.bounds.width * 0.3,
                             height: 80
                         )
-                        
-                        // Mes Bots button (wider)
                         BentoButton(
                             title: "Mes Bots",
                             icon: "person.2",
-                            destination: AnyView(MyBotsView()),
+                            action: { selectedTab = 3 },
                             width: UIScreen.main.bounds.width * 0.6,
                             height: 80
                         )
                     }
                 }
+                .padding()
                 .padding(.horizontal)
                 .padding(.bottom, 24)
                 
@@ -118,15 +122,15 @@ struct HomeView: View {
     }
 }
 
-struct BentoButton<Destination: View>: View {
+struct BentoButton: View {
     let title: String
     let icon: String
-    let destination: Destination
+    let action: () -> Void
     let width: CGFloat
     let height: CGFloat
-    
+
     var body: some View {
-        NavigationLink(destination: destination) {
+        Button(action: action) {
             VStack(spacing: 8) {
                 Image(systemName: icon)
                     .font(.system(size: 24))
@@ -142,12 +146,6 @@ struct BentoButton<Destination: View>: View {
     }
 }
 
-struct ExploreView: View {
-    var body: some View {
-        Text("Explore Chatbots")
-    }
-}
-
 struct CreateBotView: View {
     var body: some View {
         Text("Create a Chatbot")
@@ -160,9 +158,4 @@ struct MyBotsView: View {
     }
 }
 
-struct HomeView_Previews: PreviewProvider {
-    static var previews: some View {
-        HomeView()
-    }
-}
 

@@ -16,14 +16,17 @@ struct ContentView: View {
     var body: some View {
         ZStack(alignment: .bottom) {
             TabView(selection: $selectedTab) {
-                HomeView()
+                HomeView(selectedTab: $selectedTab)
                     .tag(0)
                 
-                ChatView()
+                ExploreView()
                     .tag(1)
                 
-                AccountView(isAuthenticated: $isAuthenticated, showAuthView: $showAuthView)
+                ChatView()
                     .tag(2)
+                
+                AccountView(isAuthenticated: $isAuthenticated, showAuthView: $showAuthView)
+                    .tag(3)
             }
             .tabViewStyle(PageTabViewStyle(indexDisplayMode: .never))
             .edgesIgnoringSafeArea(.bottom)
