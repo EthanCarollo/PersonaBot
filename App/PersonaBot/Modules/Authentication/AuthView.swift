@@ -162,8 +162,14 @@ struct AuthView: View {
                             Text("Vérifiez votre boîte mail.")
                                 .foregroundColor(.green)
                         case .failure(let error):
-                            Text(error.localizedDescription)
-                                .foregroundColor(.red)
+                            switch(error){
+                            case AuthError.invalidCredentials :
+                                Text("Invalid Credentials")
+                                    .foregroundColor(.red)
+                            default :
+                                Text(error.localizedDescription)
+                                    .foregroundColor(.red)
+                            }
                         }
                     }
                 }
@@ -200,21 +206,14 @@ struct AuthView: View {
             isLoading = true
             defer { isLoading = false }
             
-            do {
-                let authResponse = try await SupabaseService.shared.client.auth.signIn(email: email, password: password)
-                let accessToken = authResponse.accessToken
-                // Sauvegarder le token JWT dans le keychain
-                let saveSuccessful: Bool = KeychainWrapper.standard.set(accessToken, forKey: "PersonaBotJWTToken")
-                if saveSuccessful {
-                    print("JWT token sauvegardé avec succès")
-                } else {
-                    print("Échec de la sauvegarde du JWT token")
-                }
+            let authenticated = await SupabaseService.shared.login(email: email, password: password)
+            if(authenticated == true){
                 result = .success(())
                 isAuthenticated = true
                 dismiss()
-            } catch {
-                result = .failure(error)
+            } else {
+                isAuthenticated = false
+                result = .failure(AuthError.invalidCredentials)
             }
         }
     }
