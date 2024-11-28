@@ -22,7 +22,6 @@ def create_app():
     return app
 
 supabase_client : SupabaseClient = SupabaseClient.get_instance()
-# ChatQueryService("toto")
 
 logger.good("Launching application")
 app = create_app()

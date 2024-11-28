@@ -5,81 +5,129 @@
 //  Created by eth on 28/11/2024.
 //
 import SwiftUI
+import Combine
 
 struct ChatView: View {
-    @State private var messageText = ""
-    @State private var messages: [ChatMessage] = []
-    @State private var isLoading = false
-    @State private var keyboardHeight: CGFloat = 0
+    @StateObject private var viewModel = ChatViewModel()
     @FocusState private var isFocused: Bool
+    @State private var keyboardHeight: CGFloat = 0
     
     var body: some View {
         GeometryReader { geometry in
-            ZStack {
-                // Background
-                Color.black.edgesIgnoringSafeArea(.all)
-                
-                VStack(spacing: 0) {
-                    // Chat messages
-                    ScrollViewReader { scrollView in
-                        ScrollView {
-                            LazyVStack(spacing: 20) {
-                                ForEach(messages) { message in
-                                    ChatBubble(message: message)
-                                }
-                            }
-                            .padding()
-                        }
-                        .onChange(of: messages) { _ in
-                            withAnimation {
-                                scrollView.scrollTo(messages.last?.id, anchor: .bottom)
-                            }
-                        }
-                    }
-                    
-                    // Message input
-                    HStack(spacing: 15) {
-                        TextField("Votre message...", text: $messageText)
-                            .padding()
-                            .background(Color.white.opacity(0.1))
-                            .cornerRadius(25)
-                            .foregroundColor(.white)
-                            .focused($isFocused)
-                        
-                        Button(action: sendMessage) {
-                            if isLoading {
-                                ProgressView()
-                                    .progressViewStyle(CircularProgressViewStyle(tint: Color.neonGreen))
-                            } else {
-                                Image(systemName: "arrow.up.circle.fill")
-                                    .font(.system(size: 30))
-                                    .foregroundColor(Color.neonGreen)
-                            }
-                        }
-                        .disabled(isLoading || messageText.isEmpty)
-                    }
-                    .padding()
-                    .background(Color.black.opacity(0.8))
-                    .animation(.easeOut(duration: 0.16), value: keyboardHeight)
-                    .offset(y: -keyboardHeight)
+            VStack(spacing: 0) {
+                chatMessagesView
+                messageInputView(geometry: geometry)
+                Spacer(minLength: keyboardHeight > 0 ? keyboardHeight - 4 : 78)
+            }
+            .background(Color.black.edgesIgnoringSafeArea(.all))
+            .onChange(of: isFocused) { focused in
+                if focused {
+                    scrollToBottom(delay: 0.5)
                 }
             }
-        }
-        .navigationBarHidden(true)
-        .onAppear {
-            NotificationCenter.default.addObserver(forName: UIResponder.keyboardWillShowNotification, object: nil, queue: .main) { notification in
-                if let keyboardFrame: NSValue = notification.userInfo?[UIResponder.keyboardFrameEndUserInfoKey] as? NSValue {
-                    let keyboardRectangle = keyboardFrame.cgRectValue
-                    keyboardHeight = keyboardRectangle.height
-                }
+            .onAppear {
+                setupKeyboardObservers()
             }
-            NotificationCenter.default.addObserver(forName: UIResponder.keyboardWillHideNotification, object: nil, queue: .main) { _ in
-                keyboardHeight = 0
+            .onDisappear {
+                removeKeyboardObservers()
             }
         }
     }
     
-    private func sendMessage() {
+    private var chatMessagesView: some View {
+        ScrollViewReader { proxy in
+            ScrollView {
+                LazyVStack(spacing: 20) {
+                    ForEach(viewModel.messages) { message in
+                        ChatBubble(message: message)
+                            .id(message.id)
+                    }
+                    Color.clear.frame(height: 60)
+                }
+                .padding()
+            }
+            .onChange(of: viewModel.messages) { _ in
+                scrollToBottom()
+            }
+            .onAppear {
+                viewModel.scrollProxy = proxy
+            }
+        }
+    }
+    
+    private func messageInputView(geometry: GeometryProxy) -> some View {
+        VStack(spacing: 0) {
+            Rectangle()
+                .fill(Color.gray.opacity(0.2))
+                .frame(height: 1)
+            
+            HStack(spacing: 15) {
+                TextField("Votre message...", text: $viewModel.messageText)
+                    .padding(10)
+                    .background(Color.white.opacity(0.1))
+                    .cornerRadius(20)
+                    .foregroundColor(.white)
+                    .focused($isFocused)
+                
+                sendButton
+            }
+            .padding(.horizontal)
+            .padding(.vertical, 8)
+            .background(Color.black.opacity(0.8))
+        }
+        .padding(.bottom, geometry.safeAreaInsets.bottom)
+    }
+    
+    private var sendButton: some View {
+        Button(action: viewModel.sendMessage) {
+            VStack(spacing: 4) {
+                Image(systemName: "arrow.up.circle.fill")
+                    .font(.system(size: 24))
+                    .foregroundColor(viewModel.isLoading || viewModel.messageText.isEmpty ? .gray : .neonGreen)
+                
+                Text("Envoyer")
+                    .font(.caption)
+                    .foregroundColor(viewModel.isLoading || viewModel.messageText.isEmpty ? .gray : .neonGreen)
+            }
+        }
+        .disabled(viewModel.isLoading || viewModel.messageText.isEmpty)
+        .frame(width: 60)
+    }
+    
+    private func scrollToBottom(delay: Double = 0) {
+        DispatchQueue.main.asyncAfter(deadline: .now() + delay) {
+            withAnimation {
+                viewModel.scrollProxy?.scrollTo(viewModel.messages.last?.id, anchor: .bottom)
+            }
+        }
+    }
+    
+    private func setupKeyboardObservers() {
+        NotificationCenter.default.addObserver(forName: UIResponder.keyboardWillShowNotification, object: nil, queue: .main) { notification in
+            if let keyboardFrame: NSValue = notification.userInfo?[UIResponder.keyboardFrameEndUserInfoKey] as? NSValue {
+                let keyboardRectangle = keyboardFrame.cgRectValue
+                keyboardHeight = keyboardRectangle.height
+            }
+        }
+        
+        NotificationCenter.default.addObserver(forName: UIResponder.keyboardWillHideNotification, object: nil, queue: .main) { _ in
+            keyboardHeight = 0
+        }
+    }
+    
+    private func removeKeyboardObservers() {
+        NotificationCenter.default.removeObserver(self, name: UIResponder.keyboardWillShowNotification, object: nil)
+        NotificationCenter.default.removeObserver(self, name: UIResponder.keyboardWillHideNotification, object: nil)
+    }
+}
+
+class ChatViewModel: ObservableObject {
+    @Published var messageText = ""
+    @Published var messages: [ChatMessage] = []
+    @Published var isLoading = false
+    var scrollProxy: ScrollViewProxy?
+    
+    func sendMessage() {
         guard !messageText.isEmpty else { return }
         let newMessage = ChatMessage(id: UUID(), content: messageText, isUser: true)
         messages.append(newMessage)
@@ -91,14 +139,14 @@ struct ChatView: View {
         Task {
             do {
                 let response = try await sendMessageToBackend(message: currentMessage)
-                DispatchQueue.main.async {
+                await MainActor.run {
                     let aiResponse = ChatMessage(id: UUID(), content: response, isUser: false)
                     messages.append(aiResponse)
                     isLoading = false
                 }
             } catch {
                 print("Error: \(error.localizedDescription)")
-                DispatchQueue.main.async {
+                await MainActor.run {
                     let errorMessage = ChatMessage(id: UUID(), content: "Désolé, une erreur s'est produite. Veuillez réessayer.", isUser: false)
                     messages.append(errorMessage)
                     isLoading = false
@@ -108,7 +156,7 @@ struct ChatView: View {
     }
     
     private func sendMessageToBackend(message: String) async throws -> String {
-        guard let url = URL(string: "\(Config.backendURL)/chat") else {
+        guard let url = URL(string: Config.backendURL) else {
             throw URLError(.badURL)
         }
         
@@ -123,12 +171,6 @@ struct ChatView: View {
         let response = try JSONDecoder().decode(BackendResponse.self, from: data)
         return response.response
     }
-}
-
-struct ChatMessage: Identifiable {
-    let id: UUID
-    let content: String
-    let isUser: Bool
 }
 
 struct ChatBubble: View {
@@ -154,4 +196,13 @@ struct BackendResponse: Codable {
     let response: String
 }
 
+struct ChatMessage: Identifiable, Equatable {
+    let id: UUID
+    let content: String
+    let isUser: Bool
+    
+    static func == (lhs: ChatMessage, rhs: ChatMessage) -> Bool {
+        lhs.id == rhs.id
+    }
+}
 

@@ -72,3 +72,7 @@
 2024-11-28 15:56:57,180 - persona_bot - INFO - logger.py:81 -  SETUP LOGGER, will save the log file in file : log/2024-11-28.log
 2024-11-28 15:56:59,331 - persona_bot - INFO - supabase_client.py:35 - Initialized SupabaseClient
 2024-11-28 15:57:02,134 - persona_bot - INFO - supabase_client.py:35 - Initialized SupabaseClient
+2024-11-28 16:48:41,922 - persona_bot - INFO - logger.py:81 -  SETUP LOGGER, will save the log file in file : log/2024-11-28.log
+2024-11-28 16:48:44,380 - persona_bot - INFO - supabase_client.py:35 - Initialized SupabaseClient
+2024-11-28 16:48:44,519 - persona_bot - INFO - chat_query_service.py:19 - Creating collection 'toto'
+2024-11-28 16:48:48,534 - persona_bot - INFO - supabase_client.py:35 - Initialized SupabaseClient
