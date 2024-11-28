@@ -12,7 +12,7 @@ class SupabaseClient:
     def __init__(self):
         if SupabaseClient._instance is not None:
             raise Exception("This class is a singleton, don't call constructor but get_instance instead.")
-        self.client = create_client(SUPABASE_URL, SUPABASE_KEY)
+        self.client: Client = create_client(SUPABASE_URL, SUPABASE_KEY)
 
     def verify_jwt(self, token):
         try:
@@ -40,6 +40,18 @@ class SupabaseClient:
         except :
             return None
 
+    def create_bot(self, user_id: str, bot_public_id: str, bot_name: str, description: str):
+        # When I create a bot, I don't directly insert all Data in QDrant, I do it after cause the logics to talk with
+        # ChatQueryService shouldn't be in the SupabaseClient
+        try :
+            return self.client.table('bots').insert({
+                "created_by": user_id,
+                "bot_public_id": bot_public_id,
+                "description": description,
+                "name": bot_name
+            }).execute()
+        except :
+            return None
     
     @staticmethod
     def get_instance():

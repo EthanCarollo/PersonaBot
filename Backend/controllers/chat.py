@@ -48,7 +48,6 @@ def chat_with_bot():
     chatQueryService : ChatQueryService = ChatQueryService(bot_information.data["bot_public_id"])
 
     result = chatQueryService.chat(text)
-    print(result)
 
     # This route can be called even if the user isn't connected so we retire the token part
     # token = data.get('token')

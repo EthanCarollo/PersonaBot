@@ -34,7 +34,7 @@ class ChatQueryService:
             response = self.client.scroll(collection_name=self.collection_name, limit=1000000)
             return response[0]
         except Exception as e:
-            raise RuntimeError(f"Failed to fetch information from collection '{collection_name}': {str(e)}")
+            raise RuntimeError(f"Failed to fetch information from collection '{self.collection_name}': {str(e)}")
 
     def upsert_node(self, node_text, metadata={}):
         nodes = [TextNode(text=node_text, metadata=metadata)]
@@ -46,3 +46,17 @@ class ChatQueryService:
         if not self.chat_engine:
             raise ValueError("Chat engine is not initialized.")
         return self.chat_engine.chat(chat_str)
+
+    @staticmethod
+    def delete_collection(collection_name: str):
+        """Static method to delete a collection from Qdrant."""
+        client = QdrantClient(host=QDRANT_HOST, port=QDRANT_PORT, timeout=20)
+        try:
+            if client.collection_exists(collection_name):
+                logger.info(f"Deleting collection '{collection_name}'")
+                client.delete_collection(collection_name=collection_name)
+                logger.info(f"Collection '{collection_name}' deleted successfully.")
+            else:
+                logger.warning(f"Collection '{collection_name}' does not exist.")
+        except Exception as e:
+            logger.error(f"Failed to delete collection '{collection_name}': {str(e)}")
