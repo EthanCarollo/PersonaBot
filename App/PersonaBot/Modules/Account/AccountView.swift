@@ -13,6 +13,10 @@ struct AccountView: View {
     @Binding var isAuthenticated: Bool
     @Binding var showAuthView: Bool
     @State private var isCheckingAuth = true
+    @State private var username = ""
+    @State private var isUpdatingUsername = false
+    @State private var showUsernameUpdateAlert = false
+    @State private var usernameUpdateMessage = ""
     
     var body: some View {
         ZStack {
@@ -35,6 +39,17 @@ struct AccountView: View {
                             .font(.title)
                             .fontWeight(.bold)
                             .foregroundColor(.white)
+                        
+                        // Username TextField
+                        TextField("Nom d'utilisateur", text: $username)
+                            .foregroundColor(.white)
+                            .padding()
+                            .background(Color.white.opacity(0.1))
+                            .cornerRadius(15)
+                            .padding(.horizontal)
+                            .onSubmit {
+                                updateUsername()
+                            }
                     }
                     .padding(.top, 50)
                     
@@ -91,9 +106,20 @@ struct AccountView: View {
                 }
                 .padding(.bottom, 100) // Increased to account for NavBar
             }
+            
+            if isUpdatingUsername {
+                ProgressView()
+                    .progressViewStyle(CircularProgressViewStyle(tint: .neonGreen))
+                    .scaleEffect(2)
+            }
         }
         .navigationBarHidden(true)
         .onAppear(perform: checkAuthentication)
+        .alert(isPresented: $showUsernameUpdateAlert) {
+            Alert(title: Text("Mise à jour du nom d'utilisateur"),
+                  message: Text(usernameUpdateMessage),
+                  dismissButton: .default(Text("OK")))
+        }
     }
     
     private func checkAuthentication() {
@@ -101,10 +127,11 @@ struct AccountView: View {
         if KeychainWrapper.standard.string(forKey: "PersonaBotJWTToken") != nil {
             Task {
                 do {
-                    _ = try await supabase.auth.user()
+                    let user = try await SupabaseService.shared.client.auth.user()
                     DispatchQueue.main.async {
                         self.isAuthenticated = true
                         self.isCheckingAuth = false
+                        self.username = user.userMetadata["username"] as? String ?? ""
                     }
                 } catch {
                     print("Error checking authentication: \(error)")
@@ -120,10 +147,30 @@ struct AccountView: View {
         }
     }
     
+    private func updateUsername() {
+        isUpdatingUsername = true
+        Task {
+            do {
+                try await SupabaseService.shared.updateUsername(newUsername: username)
+                DispatchQueue.main.async {
+                    self.isUpdatingUsername = false
+                    self.usernameUpdateMessage = "Nom d'utilisateur mis à jour avec succès"
+                }
+            } catch {
+                print("Error updating username: \(error)")
+                DispatchQueue.main.async {
+                    self.isUpdatingUsername = false
+                    self.usernameUpdateMessage = "Erreur lors de la mise à jour du nom d'utilisateur"
+                    self.showUsernameUpdateAlert = true
+                }
+            }
+        }
+    }
+    
     private func logout() {
         Task {
             do {
-                try await supabase.auth.signOut()
+                try await SupabaseService.shared.client.auth.signOut()
                 KeychainWrapper.standard.removeObject(forKey: "PersonaBotJWTToken")
                 DispatchQueue.main.async {
                     self.isAuthenticated = false
@@ -161,4 +208,6 @@ struct AccountOptionButton: View {
         }
     }
 }
+
+
 

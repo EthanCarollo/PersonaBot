@@ -173,7 +173,7 @@ struct AuthView: View {
         .onOpenURL(perform: { url in
             Task {
                 do {
-                    try await supabase.auth.session(from: url)
+                    try await SupabaseService.shared.client.auth.session(from: url)
                 } catch {
                     self.result = .failure(error)
                 }
@@ -187,7 +187,7 @@ struct AuthView: View {
             defer { isLoading = false }
             
             do {
-                try await supabase.auth.signUp(email: email, password: password)
+                try await SupabaseService.shared.client.auth.signUp(email: email, password: password)
                 result = .success(())
             } catch {
                 result = .failure(error)
@@ -201,7 +201,7 @@ struct AuthView: View {
             defer { isLoading = false }
             
             do {
-                let authResponse = try await supabase.auth.signIn(email: email, password: password)
+                let authResponse = try await SupabaseService.shared.client.auth.signIn(email: email, password: password)
                 let accessToken = authResponse.accessToken
                 // Sauvegarder le token JWT dans le keychain
                 let saveSuccessful: Bool = KeychainWrapper.standard.set(accessToken, forKey: "PersonaBotJWTToken")

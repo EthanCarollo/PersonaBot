@@ -53,7 +53,7 @@ class ExploreViewModel: ObservableObject {
         if KeychainWrapper.standard.string(forKey: "PersonaBotJWTToken") != nil {
             Task {
                 do {
-                    _ = try await supabase.auth.user()
+                    _ = try await SupabaseService.shared.client.auth.user()
                     DispatchQueue.main.async {
                         self.isAuthenticated = true
                         self.isCheckingAuth = false
