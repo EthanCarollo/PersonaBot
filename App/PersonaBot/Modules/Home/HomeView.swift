@@ -8,6 +8,7 @@ import SwiftUI
 
 struct HomeView: View {
     @Binding public var selectedTab: Int
+    @State private var showProPlanView = false
     
     var body: some View {
         ZStack {
@@ -26,7 +27,7 @@ struct HomeView: View {
                 HStack {
                     Spacer()
                     Button(action: {
-                        // Action for Pro Plan
+                        showProPlanView = true
                     }) {
                         Text("Pro Plan")
                             .font(.system(size: 14, weight: .semibold))
@@ -35,6 +36,7 @@ struct HomeView: View {
                             .padding(.vertical, 6)
                             .background(Color.neonGreen)
                             .cornerRadius(15)
+                            .padding(.trailing, 8)
                     }
                 }
                 .padding(.top, 50)
@@ -119,43 +121,15 @@ struct HomeView: View {
                     .frame(height: 50)
             }
         }
-    }
-}
-
-struct BentoButton: View {
-    let title: String
-    let icon: String
-    let action: () -> Void
-    let width: CGFloat
-    let height: CGFloat
-
-    var body: some View {
-        Button(action: action) {
-            VStack(spacing: 8) {
-                Image(systemName: icon)
-                    .font(.system(size: 24))
-                    .foregroundColor(Color.neonGreen)
-                Text(title)
-                    .font(.system(size: 14, weight: .medium))
-                    .foregroundColor(Color.white)
-            }
-            .frame(width: width, height: height)
-            .background(Color.white.opacity(0.1))
-            .cornerRadius(16)
+        .sheet(isPresented: $showProPlanView) {
+            ProPlanView()
         }
     }
 }
 
-struct CreateBotView: View {
-    var body: some View {
-        Text("Create a Chatbot")
+struct HomeView_Previews: PreviewProvider {
+    static var previews: some View {
+        HomeView(selectedTab: .constant(0))
     }
 }
-
-struct MyBotsView: View {
-    var body: some View {
-        Text("My Chatbots")
-    }
-}
-
 
