@@ -7,6 +7,7 @@ logger = logging.getLogger("xlinks")
 from flask import Flask
 from flask_cors import CORS
 from services.supabase_client import SupabaseClient
+from services.chat_query_service import ChatQueryService
 import config
 import json
 
@@ -21,6 +22,7 @@ def create_app():
     return app
 
 supabase_client : SupabaseClient = SupabaseClient.get_instance()
+# ChatQueryService("toto")
 
 logger.good("Launching application")
 app = create_app()

@@ -30,7 +30,7 @@ def chat():
 
     
     return jsonify({
-        "response": text
+        "response": result
     })
 
 

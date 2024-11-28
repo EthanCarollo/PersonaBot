@@ -9,8 +9,6 @@ logger = logging.getLogger("persona_bot")
 
 class ChatQueryService:
     def __init__(self, collection_name: str):
-        print(QDRANT_HOST)
-        print(QDRANT_PORT)
         self.client = QdrantClient(host=QDRANT_HOST, port=QDRANT_PORT, timeout= 20)
         self.collection_name = collection_name
         self.query_engine = None

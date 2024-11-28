@@ -62,3 +62,13 @@
 2024-11-28 15:51:32,824 - xlinks - GOOD - logger.py:18 - Launching application
 2024-11-28 15:52:05,708 - xlinks - INFO - logger.py:81 -  SETUP LOGGER, will save the log file in file : log/2024-11-28.log
 2024-11-28 15:52:06,951 - xlinks - GOOD - logger.py:18 - Launching application
+2024-11-28 15:52:59,876 - persona_bot - INFO - logger.py:81 -  SETUP LOGGER, will save the log file in file : log/2024-11-28.log
+2024-11-28 15:53:01,562 - persona_bot - INFO - supabase_client.py:35 - Initialized SupabaseClient
+2024-11-28 15:53:04,033 - persona_bot - INFO - supabase_client.py:35 - Initialized SupabaseClient
+2024-11-28 15:55:15,590 - persona_bot - INFO - logger.py:81 -  SETUP LOGGER, will save the log file in file : log/2024-11-28.log
+2024-11-28 15:55:17,376 - persona_bot - INFO - supabase_client.py:35 - Initialized SupabaseClient
+2024-11-28 15:55:28,086 - persona_bot - INFO - logger.py:81 -  SETUP LOGGER, will save the log file in file : log/2024-11-28.log
+2024-11-28 15:55:30,502 - persona_bot - INFO - supabase_client.py:35 - Initialized SupabaseClient
+2024-11-28 15:56:57,180 - persona_bot - INFO - logger.py:81 -  SETUP LOGGER, will save the log file in file : log/2024-11-28.log
+2024-11-28 15:56:59,331 - persona_bot - INFO - supabase_client.py:35 - Initialized SupabaseClient
+2024-11-28 15:57:02,134 - persona_bot - INFO - supabase_client.py:35 - Initialized SupabaseClient
