@@ -11,7 +11,7 @@ import SwiftUI
 struct PersonaBotApp: App {
     var body: some Scene {
         WindowGroup {
-            ContentView()
+            SplashScreen()
         }
     }
 }

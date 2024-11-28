@@ -6,6 +6,13 @@
 	objectVersion = 77;
 	objects = {
 
+/* Begin PBXBuildFile section */
+		195F98E42CF89B5D0072F73E /* Auth in Frameworks */ = {isa = PBXBuildFile; productRef = 195F98E32CF89B5D0072F73E /* Auth */; };
+		195F98E62CF89B5D0072F73E /* Functions in Frameworks */ = {isa = PBXBuildFile; productRef = 195F98E52CF89B5D0072F73E /* Functions */; };
+		195F98E82CF89B5D0072F73E /* Supabase in Frameworks */ = {isa = PBXBuildFile; productRef = 195F98E72CF89B5D0072F73E /* Supabase */; };
+		195F98F12CF8A20E0072F73E /* SwiftKeychainWrapper in Frameworks */ = {isa = PBXBuildFile; productRef = 195F98F02CF8A20E0072F73E /* SwiftKeychainWrapper */; };
+/* End PBXBuildFile section */
+
 /* Begin PBXContainerItemProxy section */
 		195F98C32CF883000072F73E /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -52,6 +59,10 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				195F98E62CF89B5D0072F73E /* Functions in Frameworks */,
+				195F98E42CF89B5D0072F73E /* Auth in Frameworks */,
+				195F98F12CF8A20E0072F73E /* SwiftKeychainWrapper in Frameworks */,
+				195F98E82CF89B5D0072F73E /* Supabase in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -112,6 +123,10 @@
 			);
 			name = PersonaBot;
 			packageProductDependencies = (
+				195F98E32CF89B5D0072F73E /* Auth */,
+				195F98E52CF89B5D0072F73E /* Functions */,
+				195F98E72CF89B5D0072F73E /* Supabase */,
+				195F98F02CF8A20E0072F73E /* SwiftKeychainWrapper */,
 			);
 			productName = PersonaBot;
 			productReference = 195F98B22CF882FE0072F73E /* PersonaBot.app */;
@@ -195,6 +210,10 @@
 			);
 			mainGroup = 195F98A92CF882FE0072F73E;
 			minimizedProjectReferenceProxies = 1;
+			packageReferences = (
+				195F98E22CF89B5D0072F73E /* XCRemoteSwiftPackageReference "supabase-swift" */,
+				195F98EF2CF8A20E0072F73E /* XCRemoteSwiftPackageReference "SwiftKeychainWrapper" */,
+			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = 195F98B32CF882FE0072F73E /* Products */;
 			projectDirPath = "";
@@ -404,6 +423,7 @@
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				IPHONEOS_DEPLOYMENT_TARGET = 15.6;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -433,6 +453,7 @@
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				IPHONEOS_DEPLOYMENT_TARGET = 15.6;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -558,6 +579,48 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		195F98E22CF89B5D0072F73E /* XCRemoteSwiftPackageReference "supabase-swift" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/supabase/supabase-swift";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 2.5.1;
+			};
+		};
+		195F98EF2CF8A20E0072F73E /* XCRemoteSwiftPackageReference "SwiftKeychainWrapper" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/jrendel/SwiftKeychainWrapper.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 4.0.1;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		195F98E32CF89B5D0072F73E /* Auth */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 195F98E22CF89B5D0072F73E /* XCRemoteSwiftPackageReference "supabase-swift" */;
+			productName = Auth;
+		};
+		195F98E52CF89B5D0072F73E /* Functions */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 195F98E22CF89B5D0072F73E /* XCRemoteSwiftPackageReference "supabase-swift" */;
+			productName = Functions;
+		};
+		195F98E72CF89B5D0072F73E /* Supabase */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 195F98E22CF89B5D0072F73E /* XCRemoteSwiftPackageReference "supabase-swift" */;
+			productName = Supabase;
+		};
+		195F98F02CF8A20E0072F73E /* SwiftKeychainWrapper */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 195F98EF2CF8A20E0072F73E /* XCRemoteSwiftPackageReference "SwiftKeychainWrapper" */;
+			productName = SwiftKeychainWrapper;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = 195F98AA2CF882FE0072F73E /* Project object */;
 }
