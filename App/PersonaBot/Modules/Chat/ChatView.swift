@@ -15,7 +15,7 @@ struct ChatView: View {
     var body: some View {
         GeometryReader { geometry in
             VStack(spacing: 0) {
-                chatMessagesView
+                chatMessagesView.padding(.top, 16)
                 messageInputView(geometry: geometry)
                 Spacer(minLength: keyboardHeight > 0 ? keyboardHeight - 4 : 78)
             }
@@ -37,10 +37,11 @@ struct ChatView: View {
     private var chatMessagesView: some View {
         ScrollViewReader { proxy in
             ScrollView {
-                LazyVStack(spacing: 20) {
+                LazyVStack(spacing: 0) {
                     ForEach(viewModel.messages) { message in
                         ChatBubble(message: message)
                             .id(message.id)
+                            .padding(.bottom, 20)
                     }
                     Color.clear.frame(height: 60)
                 }
@@ -139,6 +140,7 @@ class ChatViewModel: ObservableObject {
         Task {
             do {
                 let response = try await sendMessageToBackend(message: currentMessage)
+                print(response)
                 await MainActor.run {
                     let aiResponse = ChatMessage(id: UUID(), content: response, isUser: false)
                     messages.append(aiResponse)
@@ -156,7 +158,7 @@ class ChatViewModel: ObservableObject {
     }
     
     private func sendMessageToBackend(message: String) async throws -> String {
-        guard let url = URL(string: Config.backendURL) else {
+        guard let url = URL(string: Config.backendURL + "/chat") else {
             throw URLError(.badURL)
         }
         
