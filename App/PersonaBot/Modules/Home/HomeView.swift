@@ -100,7 +100,7 @@ struct HomeView: View {
                         BentoButton(
                             title: "Créer",
                             icon: "plus.circle",
-                            action: { selectedTab = 2 },
+                            action: { selectedTab = 3 },
                             width: UIScreen.main.bounds.width * 0.3,
                             height: 80
                         )
