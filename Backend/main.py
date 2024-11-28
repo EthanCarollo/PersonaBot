@@ -13,12 +13,14 @@ import json
 
 def create_app():
     from controllers.chat import chat_bp
+    from controllers.bot.data import bot_data_bp
     
     # Trust CORS from everywhere
     app = Flask(__name__)
     CORS(app, resources={r"/*": {"origins": "*"}})
     
     app.register_blueprint(chat_bp)
+    app.register_blueprint(bot_data_bp)
     return app
 
 supabase_client : SupabaseClient = SupabaseClient.get_instance()

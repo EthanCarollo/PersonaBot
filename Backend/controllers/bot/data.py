@@ -8,34 +8,16 @@ import logging
 import os
 
 logger = logging.getLogger("persona_bot")
-chat_bp = Blueprint('chat_bp', __name__)
+bot_data_bp = Blueprint('bot_data_bp', __name__)
 supabase_client: SupabaseClient = SupabaseClient.get_instance()
 
-@chat_bp.route('/chat', methods=['POST'])
-def chat():
-    data = request.json
-
-    text = data.get('text')
-    if not text:
-        return jsonify({"error": "Missing 'text'"}), 400
-    
-    result = send_gpt(text)
-
-    # This route can be called even if the user isn't connected so we retire the token part
-    # token = data.get('token')
-    
-    return jsonify({
-        "response": result
-    })
-
-
-@chat_bp.route('/chat_with_bot', methods=['POST'])
+@bot_data_bp.route('/bot/data', methods=['POST'])
 def chat_with_bot():
     data = request.json
 
-    text = data.get('text')
-    if not text:
-        return jsonify({"error": "Missing 'text'"}), 400
+    new_data = data.get('new_data')
+    if not new_data:
+        return jsonify({"error": "Missing 'new_data'"}), 400
     
     bot = data.get("bot_public_id")
     if not bot:
@@ -46,16 +28,13 @@ def chat_with_bot():
         return jsonify({"error": "Bot doesn't exist, weird."}), 400
 
     chatQueryService : ChatQueryService = ChatQueryService(bot_information.data["bot_public_id"])
+    chatQueryService.upsert_node(new_data)
 
-    result = chatQueryService.chat(text)
-    print(result)
 
     # This route can be called even if the user isn't connected so we retire the token part
     # token = data.get('token')
     
-    # Result is of type AgentChatResponse 
-    # https://docs.llamaindex.ai/en/stable/api_reference/chat_engines/
     return jsonify({
-        "response": result.response
+        "response": "noice insertion noice"
     })
 

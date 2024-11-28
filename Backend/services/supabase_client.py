@@ -1,5 +1,5 @@
 from supabase import create_client, Client
-from config import SUPABASE_URL, SUPABASE_KEY
+from config import SUPABASE_URL, SUPABASE_KEY, SUPABASE_JWT_SECRET
 import jwt
 from jwt import InvalidTokenError
 import logging
@@ -28,9 +28,22 @@ class SupabaseClient:
             return None
         return self.get_profile_with_email(profile["email"])
     
+    def get_profile_with_email(self, email):
+        try :
+            return self.client.table('profiles').select('*').eq('email', email).single().execute()
+        except :
+            return None
+    
+    def get_bot_with_public_id(self, bot_id):
+        try :
+            return self.client.table('bots').select('*').eq('bot_public_id', bot_id).single().execute()
+        except :
+            return None
+
+    
     @staticmethod
     def get_instance():
         if SupabaseClient._instance is None:
             SupabaseClient._instance = SupabaseClient()
         logger.info("Initialized SupabaseClient")
-        return SupabaseClient._instance.client
+        return SupabaseClient._instance

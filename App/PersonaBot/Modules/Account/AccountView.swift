@@ -124,27 +124,10 @@ struct AccountView: View {
     
     private func checkAuthentication() {
         isCheckingAuth = true
-        if KeychainWrapper.standard.string(forKey: "PersonaBotJWTToken") != nil {
-            Task {
-                do {
-                    let user = try await SupabaseService.shared.client.auth.user()
-                    DispatchQueue.main.async {
-                        self.isAuthenticated = true
-                        self.isCheckingAuth = false
-                        self.username = user.userMetadata["username"] as? String ?? ""
-                    }
-                } catch {
-                    print("Error checking authentication: \(error)")
-                    DispatchQueue.main.async {
-                        self.isAuthenticated = false
-                        self.isCheckingAuth = false
-                    }
-                }
-            }
-        } else {
-            isAuthenticated = false
-            isCheckingAuth = false
+        Task {
+            self.isAuthenticated = await SupabaseService.shared.isAuthenticated()
         }
+        isCheckingAuth = false
     }
     
     private func updateUsername() {
@@ -167,17 +150,14 @@ struct AccountView: View {
         }
     }
     
+    private func login() async {
+        
+    }
+    
     private func logout() {
         Task {
-            do {
-                try await SupabaseService.shared.client.auth.signOut()
-                KeychainWrapper.standard.removeObject(forKey: "PersonaBotJWTToken")
-                DispatchQueue.main.async {
-                    self.isAuthenticated = false
-                }
-            } catch {
-                print("Error logging out: \(error)")
-            }
+            await SupabaseService.shared.logout()
+            self.isAuthenticated = false
         }
     }
 }
