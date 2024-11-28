@@ -23,7 +23,7 @@ struct HomeView: View {
             VStack(spacing: 30) {
                 // Logo and title section
                 VStack(spacing: 20) {
-                    Text("Iakadir")
+                    Text("Persona Bot")
                         .font(.system(size: 32, weight: .bold))
                         .foregroundColor(Color.neonGreen)
                     

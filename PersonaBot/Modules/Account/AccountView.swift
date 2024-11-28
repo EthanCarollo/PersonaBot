@@ -6,17 +6,24 @@
 //
 
 import SwiftUI
+import SwiftKeychainWrapper
+import Supabase
 
 struct AccountView: View {
     @Binding var isAuthenticated: Bool
     @Binding var showAuthView: Bool
+    @State private var isCheckingAuth = true
     
     var body: some View {
         ZStack {
             // Background
             Color.black.edgesIgnoringSafeArea(.all)
             
-            if isAuthenticated {
+            if isCheckingAuth {
+                ProgressView()
+                    .progressViewStyle(CircularProgressViewStyle(tint: .neonGreen))
+                    .scaleEffect(2)
+            } else if isAuthenticated {
                 VStack(spacing: 20) {
                     // Profile section
                     VStack(spacing: 15) {
@@ -43,7 +50,7 @@ struct AccountView: View {
                     Spacer()
                     
                     // Logout button
-                    Button(action: { isAuthenticated = false }) {
+                    Button(action: logout) {
                         Text("Déconnexion")
                             .font(.system(size: 17, weight: .semibold))
                             .foregroundColor(.white)
@@ -86,6 +93,45 @@ struct AccountView: View {
             }
         }
         .navigationBarHidden(true)
+        .onAppear(perform: checkAuthentication)
+    }
+    
+    private func checkAuthentication() {
+        isCheckingAuth = true
+        if KeychainWrapper.standard.string(forKey: "PersonaBotJWTToken") != nil {
+            Task {
+                do {
+                    _ = try await supabase.auth.user()
+                    DispatchQueue.main.async {
+                        self.isAuthenticated = true
+                        self.isCheckingAuth = false
+                    }
+                } catch {
+                    print("Error checking authentication: \(error)")
+                    DispatchQueue.main.async {
+                        self.isAuthenticated = false
+                        self.isCheckingAuth = false
+                    }
+                }
+            }
+        } else {
+            isAuthenticated = false
+            isCheckingAuth = false
+        }
+    }
+    
+    private func logout() {
+        Task {
+            do {
+                try await supabase.auth.signOut()
+                KeychainWrapper.standard.removeObject(forKey: "PersonaBotJWTToken")
+                DispatchQueue.main.async {
+                    self.isAuthenticated = false
+                }
+            } catch {
+                print("Error logging out: \(error)")
+            }
+        }
     }
 }
 

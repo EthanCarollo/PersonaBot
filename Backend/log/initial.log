@@ -1,0 +1,64 @@
+2024-11-28 14:57:31,770 - xlinks - INFO - logger.py:81 -  SETUP LOGGER, will save the log file in file : log/2024-11-28.log
+2024-11-28 14:57:43,736 - xlinks - INFO - logger.py:81 -  SETUP LOGGER, will save the log file in file : log/2024-11-28.log
+2024-11-28 14:57:44,061 - xlinks - INFO - supabase_client.py:35 - Initialized SupabaseClient
+2024-11-28 14:57:44,062 - xlinks - GOOD - logger.py:18 - Launching application
+2024-11-28 14:57:53,623 - xlinks - INFO - supabase_client.py:35 - Initialized SupabaseClient
+2024-11-28 14:58:34,717 - xlinks - INFO - logger.py:81 -  SETUP LOGGER, will save the log file in file : log/2024-11-28.log
+2024-11-28 14:58:35,065 - xlinks - INFO - supabase_client.py:35 - Initialized SupabaseClient
+2024-11-28 14:58:35,066 - xlinks - GOOD - logger.py:18 - Launching application
+2024-11-28 14:58:37,168 - xlinks - INFO - supabase_client.py:35 - Initialized SupabaseClient
+2024-11-28 14:58:46,382 - xlinks - INFO - logger.py:81 -  SETUP LOGGER, will save the log file in file : log/2024-11-28.log
+2024-11-28 14:58:46,654 - xlinks - INFO - supabase_client.py:35 - Initialized SupabaseClient
+2024-11-28 14:58:46,654 - xlinks - GOOD - logger.py:18 - Launching application
+2024-11-28 14:58:48,387 - xlinks - INFO - supabase_client.py:35 - Initialized SupabaseClient
+2024-11-28 15:07:32,503 - xlinks - INFO - logger.py:81 -  SETUP LOGGER, will save the log file in file : log/2024-11-28.log
+2024-11-28 15:07:43,563 - xlinks - INFO - logger.py:81 -  SETUP LOGGER, will save the log file in file : log/2024-11-28.log
+2024-11-28 15:07:45,577 - xlinks - INFO - supabase_client.py:35 - Initialized SupabaseClient
+2024-11-28 15:07:45,578 - xlinks - GOOD - logger.py:18 - Launching application
+2024-11-28 15:07:47,557 - xlinks - INFO - supabase_client.py:35 - Initialized SupabaseClient
+2024-11-28 15:19:12,534 - xlinks - INFO - logger.py:81 -  SETUP LOGGER, will save the log file in file : log/2024-11-28.log
+2024-11-28 15:19:13,930 - xlinks - GOOD - logger.py:18 - Launching application
+2024-11-28 15:20:12,022 - xlinks - INFO - logger.py:81 -  SETUP LOGGER, will save the log file in file : log/2024-11-28.log
+2024-11-28 15:20:13,443 - xlinks - GOOD - logger.py:18 - Launching application
+2024-11-28 15:22:37,974 - xlinks - INFO - logger.py:81 -  SETUP LOGGER, will save the log file in file : log/2024-11-28.log
+2024-11-28 15:22:39,551 - xlinks - GOOD - logger.py:18 - Launching application
+2024-11-28 15:25:05,722 - xlinks - INFO - logger.py:81 -  SETUP LOGGER, will save the log file in file : log/2024-11-28.log
+2024-11-28 15:25:07,877 - xlinks - GOOD - logger.py:18 - Launching application
+2024-11-28 15:25:18,161 - xlinks - INFO - logger.py:81 -  SETUP LOGGER, will save the log file in file : log/2024-11-28.log
+2024-11-28 15:25:19,491 - xlinks - GOOD - logger.py:18 - Launching application
+2024-11-28 15:25:41,358 - xlinks - INFO - logger.py:81 -  SETUP LOGGER, will save the log file in file : log/2024-11-28.log
+2024-11-28 15:25:42,662 - xlinks - GOOD - logger.py:18 - Launching application
+2024-11-28 15:28:11,321 - xlinks - INFO - logger.py:81 -  SETUP LOGGER, will save the log file in file : log/2024-11-28.log
+2024-11-28 15:28:12,719 - xlinks - GOOD - logger.py:18 - Launching application
+2024-11-28 15:32:57,240 - xlinks - INFO - logger.py:81 -  SETUP LOGGER, will save the log file in file : log/2024-11-28.log
+2024-11-28 15:32:58,825 - xlinks - GOOD - logger.py:18 - Launching application
+2024-11-28 15:33:30,442 - xlinks - INFO - logger.py:81 -  SETUP LOGGER, will save the log file in file : log/2024-11-28.log
+2024-11-28 15:33:31,849 - xlinks - GOOD - logger.py:18 - Launching application
+2024-11-28 15:34:35,188 - xlinks - INFO - logger.py:81 -  SETUP LOGGER, will save the log file in file : log/2024-11-28.log
+2024-11-28 15:34:36,642 - xlinks - GOOD - logger.py:18 - Launching application
+2024-11-28 15:36:42,992 - xlinks - INFO - logger.py:81 -  SETUP LOGGER, will save the log file in file : log/2024-11-28.log
+2024-11-28 15:36:45,138 - xlinks - GOOD - logger.py:18 - Launching application
+2024-11-28 15:38:02,676 - xlinks - INFO - logger.py:81 -  SETUP LOGGER, will save the log file in file : log/2024-11-28.log
+2024-11-28 15:38:04,133 - xlinks - GOOD - logger.py:18 - Launching application
+2024-11-28 15:39:27,342 - xlinks - INFO - logger.py:81 -  SETUP LOGGER, will save the log file in file : log/2024-11-28.log
+2024-11-28 15:39:28,806 - xlinks - GOOD - logger.py:18 - Launching application
+2024-11-28 15:39:44,892 - xlinks - INFO - logger.py:81 -  SETUP LOGGER, will save the log file in file : log/2024-11-28.log
+2024-11-28 15:39:46,288 - xlinks - GOOD - logger.py:18 - Launching application
+2024-11-28 15:41:22,804 - xlinks - INFO - logger.py:81 -  SETUP LOGGER, will save the log file in file : log/2024-11-28.log
+2024-11-28 15:41:24,253 - xlinks - GOOD - logger.py:18 - Launching application
+2024-11-28 15:43:20,597 - xlinks - INFO - logger.py:81 -  SETUP LOGGER, will save the log file in file : log/2024-11-28.log
+2024-11-28 15:43:22,506 - xlinks - GOOD - logger.py:18 - Launching application
+2024-11-28 15:46:45,018 - xlinks - INFO - logger.py:81 -  SETUP LOGGER, will save the log file in file : log/2024-11-28.log
+2024-11-28 15:46:46,549 - xlinks - GOOD - logger.py:18 - Launching application
+2024-11-28 15:48:32,590 - xlinks - INFO - logger.py:81 -  SETUP LOGGER, will save the log file in file : log/2024-11-28.log
+2024-11-28 15:48:34,269 - xlinks - GOOD - logger.py:18 - Launching application
+2024-11-28 15:50:45,119 - xlinks - INFO - logger.py:81 -  SETUP LOGGER, will save the log file in file : log/2024-11-28.log
+2024-11-28 15:50:46,512 - xlinks - GOOD - logger.py:18 - Launching application
+2024-11-28 15:50:58,599 - xlinks - INFO - logger.py:81 -  SETUP LOGGER, will save the log file in file : log/2024-11-28.log
+2024-11-28 15:50:59,833 - xlinks - GOOD - logger.py:18 - Launching application
+2024-11-28 15:51:16,978 - xlinks - INFO - logger.py:81 -  SETUP LOGGER, will save the log file in file : log/2024-11-28.log
+2024-11-28 15:51:18,198 - xlinks - GOOD - logger.py:18 - Launching application
+2024-11-28 15:51:31,542 - xlinks - INFO - logger.py:81 -  SETUP LOGGER, will save the log file in file : log/2024-11-28.log
+2024-11-28 15:51:32,824 - xlinks - GOOD - logger.py:18 - Launching application
+2024-11-28 15:52:05,708 - xlinks - INFO - logger.py:81 -  SETUP LOGGER, will save the log file in file : log/2024-11-28.log
+2024-11-28 15:52:06,951 - xlinks - GOOD - logger.py:18 - Launching application

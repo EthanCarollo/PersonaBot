@@ -7,6 +7,7 @@
 
 import SwiftUI
 import Supabase
+import SwiftKeychainWrapper
 
 struct AuthView: View {
     @Environment(\.dismiss) private var dismiss
@@ -196,18 +197,26 @@ struct AuthView: View {
     
     func loginButtonTapped() {
         Task {
-                    isLoading = true
-                    defer { isLoading = false }
-                    
-                    do {
-                        try await supabase.auth.signIn(email: email, password: password)
-                        result = .success(())
-                        isAuthenticated = true
-                        dismiss()
-                    } catch {
-                        result = .failure(error)
-                    }
+            isLoading = true
+            defer { isLoading = false }
+            
+            do {
+                let authResponse = try await supabase.auth.signIn(email: email, password: password)
+                let accessToken = authResponse.accessToken
+                // Sauvegarder le token JWT dans le keychain
+                let saveSuccessful: Bool = KeychainWrapper.standard.set(accessToken, forKey: "PersonaBotJWTToken")
+                if saveSuccessful {
+                    print("JWT token sauvegardé avec succès")
+                } else {
+                    print("Échec de la sauvegarde du JWT token")
                 }
+                result = .success(())
+                isAuthenticated = true
+                dismiss()
+            } catch {
+                result = .failure(error)
+            }
+        }
     }
 }
 
