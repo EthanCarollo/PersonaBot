@@ -20,14 +20,18 @@ class MyBotsViewModel: ObservableObject {
         }
     }
     
-    func fetchBots() async {
+    func fetchBots(showLoad: Bool = true) async {
         await MainActor.run {
-            isLoading = true
+            if(showLoad) {
+                isLoading = true
+            }
         }
         await BotsViewModel.shared.fetchBots()
         DispatchQueue.main.async { [weak self] in
             self?.savedBots = BotsViewModel.shared.savedBots
-            self?.isLoading = false
+            if(showLoad) {
+                self?.isLoading = false
+            }
         }
     }
     
@@ -36,7 +40,7 @@ class MyBotsViewModel: ObservableObject {
             self?.savedBots.removeAll { $0.id == botId }
         }
         await SupabaseService.shared.deleteUserSavedBot(botId: botId)
-        await fetchBots()
+        await fetchBots(showLoad: false)
     }
 }
 
