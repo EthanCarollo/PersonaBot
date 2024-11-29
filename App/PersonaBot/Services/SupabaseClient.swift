@@ -68,6 +68,7 @@ class SupabaseService {
         do {
             let user = try await self.client.auth.user()
             
+            
             let savedBots: [SavedBot] = try await self.client
                 .from("saved_bots")
                 .select("user_id, bot_id")

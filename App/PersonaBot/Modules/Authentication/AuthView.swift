@@ -19,6 +19,7 @@ struct AuthView: View {
     @State private var showPassword = false
     @State private var isLoginMode = false
     @EnvironmentObject var authViewModel: AuthViewModel
+    @State private var keyboardHeight: CGFloat = 0
     
     var body: some View {
         ZStack {
@@ -32,7 +33,7 @@ struct AuthView: View {
                     .rotationEffect(Angle(degrees: 20))
             }
             
-            ScrollView {
+            VStack {
                 VStack(spacing: 30) {
                     // Header
                     HStack {
@@ -176,7 +177,10 @@ struct AuthView: View {
                     }
                 }
                 .padding(.vertical)
+                Spacer(minLength: keyboardHeight > 0 ? 40 : 0)
+                Spacer()
             }
+            // Spacer(minLength: keyboardHeight > 0 ? 60 : 0)
         }
         .onOpenURL(perform: { url in
             Task {
@@ -187,6 +191,30 @@ struct AuthView: View {
                 }
             }
         })
+        .onAppear {
+            setupKeyboardObservers()
+        }
+        .onDisappear {
+            removeKeyboardObservers()
+        }
+    }
+    
+    private func setupKeyboardObservers() {
+        NotificationCenter.default.addObserver(forName: UIResponder.keyboardWillShowNotification, object: nil, queue: .main) { notification in
+            if let keyboardFrame: NSValue = notification.userInfo?[UIResponder.keyboardFrameEndUserInfoKey] as? NSValue {
+                let keyboardRectangle = keyboardFrame.cgRectValue
+                keyboardHeight = keyboardRectangle.height
+            }
+        }
+        
+        NotificationCenter.default.addObserver(forName: UIResponder.keyboardWillHideNotification, object: nil, queue: .main) { _ in
+            keyboardHeight = 0
+        }
+    }
+    
+    private func removeKeyboardObservers() {
+        NotificationCenter.default.removeObserver(self, name: UIResponder.keyboardWillShowNotification, object: nil)
+        NotificationCenter.default.removeObserver(self, name: UIResponder.keyboardWillHideNotification, object: nil)
     }
     
     func signUpButtonTapped() {
