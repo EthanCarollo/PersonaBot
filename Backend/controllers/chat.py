@@ -18,7 +18,7 @@ def chat():
     text = data.get('text')
     if not text:
         return jsonify({"error": "Missing 'text'"}), 400
-    
+
     result = send_gpt(text)
 
     # This route can be called even if the user isn't connected so we retire the token part
@@ -44,6 +44,14 @@ def chat_with_bot():
     bot_information = supabase_client.get_bot_with_public_id(bot)
     if not bot_information :
         return jsonify({"error": "Bot doesn't exist, weird."}), 400
+
+    logger.warning(f"Receive in chat_with_bot : {bot}")
+
+    token = data.get('token')
+    print(token)
+    if not token :
+        return jsonify({"error": "Missing 'token'."}), 400
+    supabase_client.get_profile_from_jwt(token)
 
     chatQueryService : ChatQueryService = ChatQueryService(bot_information.data["bot_public_id"])
 

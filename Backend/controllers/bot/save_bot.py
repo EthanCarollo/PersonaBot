@@ -15,10 +15,17 @@ supabase_client: SupabaseClient = SupabaseClient.get_instance()
 
 @add_bot_bp.route('/bot/add', methods=['POST'])
 def add_bot():
+    data = request.json
     bot_id = data.get("bot_id")
-    if not bot:
+    if not bot_id:
         return jsonify({"error": "Missing 'bot_id'"}), 400
 
     token = data.get('token')
-    supabase_client.get_profile_from_jwt(token)
-    pass
+    supabase_profile = supabase_client.get_profile_from_jwt(token)
+
+    if not supabase_profile:
+        return jsonify({"error": "Not a good token !"}), 400
+
+    supabase_client.add_bot_to_saved(bot_id, supabase_profile.data["id"])
+
+    return jsonify({"success": "Success !"})

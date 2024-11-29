@@ -11,6 +11,7 @@ class ExploreViewModel: ObservableObject {
     @Published var bots: [Bot]
     @Published var searchText: String = ""
     @Published var isAuthenticated: Bool = false
+    @Published var isLoading: Bool = false
     @Published var isCheckingAuth: Bool = false
     
     init() {
@@ -19,28 +20,32 @@ class ExploreViewModel: ObservableObject {
         setBots()
     }
     
-    func toggleSave(for bot: Bot) {
-        if isAuthenticated {
-            if let index = bots.firstIndex(where: { $0.id == bot.id }) {
-               //  bots[index].is_saved.toggle()
-            }
-        }
-    }
-    
     var filteredBots: [Bot] {
         if searchText.isEmpty {
             return bots
         }
-        return bots.filter { $0.name.localizedCaseInsensitiveContains(searchText) ||
-            (($0.description?.localizedCaseInsensitiveContains(searchText)) != nil) }
+        return bots.filter {
+            if let botDescription = $0.description {
+                return $0.name.localizedCaseInsensitiveContains(searchText) ||
+                botDescription.localizedCaseInsensitiveContains(searchText)
+            } else {
+                return $0.name.localizedCaseInsensitiveContains(searchText)
+            }
+        }
     }
     
     func setBots() {
+        isLoading = true // Set isLoading to true before fetching data
         Task {
             let botsRequest = await SupabaseService.shared.getUserUnsavedBots()
             if let fetchedBots = botsRequest {
                 await MainActor.run {
                     self.bots = fetchedBots
+                    self.isLoading = false // Set isLoading to false after successful fetch
+                }
+            } else {
+                await MainActor.run {
+                    self.isLoading = false // Set isLoading to false even if fetching fails
                 }
             }
         }
@@ -101,26 +106,38 @@ struct ExploreView: View {
                 .cornerRadius(12)
                 .padding(.horizontal)
                 
-                ScrollView {
-                    LazyVStack(spacing: 16) {
-                        ForEach(viewModel.filteredBots) { bot in
-                            BotCard(bot: bot, iconAction: "bookmark", isAuthenticated: viewModel.isAuthenticated) {
-                                if viewModel.isAuthenticated {
-                                    viewModel.toggleSave(for: bot)
-                                } else {
-                                    withAnimation {
-                                        showAuthAlert = true
+                if viewModel.isLoading {
+                    ProgressView()
+                        .progressViewStyle(CircularProgressViewStyle())
+                        .scaleEffect(1.5)
+                        .frame(maxWidth: .infinity, maxHeight: .infinity)
+                        .tint(.neonGreen)
+                } else {
+                    ScrollView {
+                        LazyVStack(spacing: 16) {
+                            ForEach(viewModel.filteredBots) { bot in
+                                BotCard(bot: bot, iconAction: "bookmark", isAuthenticated: viewModel.isAuthenticated, onAction: {
+                                    Task {
+                                        do {
+                                            try await BackendService.shared.saveBot(botId: bot.id)
+                                        } catch {
+                                            print(error)
+                                        }
                                     }
-                                }
+                                })
                             }
                         }
+                        .padding(.horizontal)
+                        .padding(.bottom, 72)
                     }
-                    .padding(.horizontal)
-                    .padding(.bottom, 72)
                 }
                 
+                
+                
                 Spacer()
-            }
+            }.onAppear(perform: {
+                viewModel.setBots()
+            })
             
             if showAuthAlert {
                 CustomAlert(isPresented: $showAuthAlert, message: "Fonctionnalité réservée aux membres connectés")
@@ -135,5 +152,3 @@ struct ExploreView: View {
         }
     }
 }
-
-

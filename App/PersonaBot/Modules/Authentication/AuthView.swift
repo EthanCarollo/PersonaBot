@@ -18,7 +18,7 @@ struct AuthView: View {
     @State private var result: Result<Void, Error>?
     @State private var showPassword = false
     @State private var isLoginMode = false
-    @Binding var isAuthenticated: Bool
+    @EnvironmentObject var authViewModel: AuthViewModel
     
     var body: some View {
         ZStack {
@@ -76,7 +76,7 @@ struct AuthView: View {
                             HStack {
                                 Image(systemName: "person")
                                     .foregroundColor(.green)
-                                TextField("Nom complet", text: $name)
+                                TextField("Nom complet", text: $name, prompt: Text("Nom complet").foregroundColor(.gray))
                                     .textContentType(.name)
                                     .foregroundColor(.black)
                             }
@@ -89,7 +89,7 @@ struct AuthView: View {
                         HStack {
                             Image(systemName: "envelope")
                                 .foregroundColor(.green)
-                            TextField("Email", text: $email)
+                            TextField("", text: $email, prompt: Text("Email").foregroundColor(.gray))
                                 .textContentType(.emailAddress)
                                 .textInputAutocapitalization(.never)
                                 .autocorrectionDisabled()
@@ -105,9 +105,9 @@ struct AuthView: View {
                                 .foregroundColor(.green)
                             Group {
                                 if showPassword {
-                                    TextField("Mot de passe", text: $password)
+                                    TextField("", text: $password, prompt: Text("Mot de passe").foregroundColor(.gray))
                                 } else {
-                                    SecureField("Mot de passe", text: $password)
+                                    SecureField("", text: $password, prompt: Text("Mot de passe").foregroundColor(.gray))
                                 }
                             }
                             .textContentType(.password)
@@ -126,6 +126,7 @@ struct AuthView: View {
                     }
                     .padding(.horizontal)
                     
+                    /*
                     // Forgot password
                     Button(action: {
                         // Handle forgot password
@@ -134,6 +135,7 @@ struct AuthView: View {
                             .foregroundColor(.white)
                             .underline()
                     }
+                     */
                     
                     // Sign up/Login button
                     Button(action: isLoginMode ? loginButtonTapped : signUpButtonTapped) {
@@ -209,10 +211,10 @@ struct AuthView: View {
             let authenticated = await SupabaseService.shared.login(email: email, password: password)
             if(authenticated == true){
                 result = .success(())
-                isAuthenticated = true
+                authViewModel.isAuthenticated = true
                 dismiss()
             } else {
-                isAuthenticated = false
+                authViewModel.isAuthenticated = false
                 result = .failure(AuthError.invalidCredentials)
             }
         }

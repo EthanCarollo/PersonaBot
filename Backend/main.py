@@ -15,6 +15,7 @@ def create_app():
     from controllers.chat import chat_bp
     from controllers.bot.data import bot_data_bp
     from controllers.bot.create import create_bot_data_bp
+    from controllers.bot.save_bot import add_bot_bp
     
     # Trust CORS from everywhere
     app = Flask(__name__)
@@ -23,6 +24,7 @@ def create_app():
     app.register_blueprint(chat_bp)
     app.register_blueprint(bot_data_bp)
     app.register_blueprint(create_bot_data_bp)
+    app.register_blueprint(add_bot_bp)
     return app
 
 supabase_client : SupabaseClient = SupabaseClient.get_instance()

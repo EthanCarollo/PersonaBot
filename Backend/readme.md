@@ -11,3 +11,5 @@ pip install -r requirements.txt
 ```bash
 gunicorn --bind 0.0.0.0:5001 main:app
 ```
+
+> Note : the SUPABASE_KEY should be the Supabase Service Key

@@ -52,7 +52,7 @@ class ChatViewModel: ObservableObject {
         
         Task {
             do {
-                let response = try await sendMessageToBackend(message: currentMessage, botPublicId: selectedBot.bot_public_id)
+                let response = try await BackendService.shared.sendMessageToBackend(message: currentMessage, botPublicId: selectedBot.bot_public_id)
                 print(response)
                 await MainActor.run {
                     let aiResponse = ChatMessage(id: UUID(), content: response, isUser: false)
@@ -69,25 +69,5 @@ class ChatViewModel: ObservableObject {
             }
         }
     }
-    
-    private func sendMessageToBackend(message: String, botPublicId: String) async throws -> String {
-        // Déterminer l'URL en fonction de l'ID du bot, si c'est le classic, alors on va just chatter normalement
-        let endpoint = botPublicId == "classic" ? "/chat" : "/chat_with_bot"
-        guard let url = URL(string: Config.backendURL + endpoint) else {
-            throw URLError(.badURL)
-        }
-        
-        var request = URLRequest(url: url)
-        request.httpMethod = "POST"
-        request.setValue("application/json", forHTTPHeaderField: "Content-Type")
-        
-        let body = ["text": message, "bot_public_id": botPublicId]
-        request.httpBody = try JSONEncoder().encode(body)
-        
-        let (data, _) = try await URLSession.shared.data(for: request)
-        let response = try JSONDecoder().decode(BackendResponse.self, from: data)
-        return response.response
-    }
-
 }
 

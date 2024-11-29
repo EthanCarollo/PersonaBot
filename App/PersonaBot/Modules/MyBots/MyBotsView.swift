@@ -30,28 +30,49 @@ struct MyBotsView: View {
                     .cornerRadius(10)
                     .padding()
                     
-                    if isLoading {
-                        ProgressView()
-                            .progressViewStyle(CircularProgressViewStyle(tint: .neonGreen))
-                            .scaleEffect(2)
-                            .frame(maxWidth: .infinity, maxHeight: .infinity)
-                    } else {
-                        // Bots list
-                        ScrollView {
-                            LazyVStack(spacing: 12) {
-                                ForEach(filteredBots) { bot in
-                                    BotCard(bot: bot, iconAction: "person.slash", isAuthenticated: true, onAction: {
-                                        Task {
-                                            await SupabaseService.shared.deleteUserSavedBot(botId: bot.id)
-                                            DispatchQueue.main.async {
-                                                setBots()
-                                            }
-                                        }
-                                     
-                                    })
-                                }
+                    GeometryReader { geometry in
+                        if isLoading {
+                            ProgressView()
+                                .progressViewStyle(CircularProgressViewStyle(tint: .neonGreen))
+                                .scaleEffect(2)
+                                .frame(maxWidth: .infinity, maxHeight: .infinity)
+                        } else if bots.isEmpty {
+                            VStack(spacing: 20) {
+                                Image(systemName: "robot")
+                                    .font(.system(size: 60))
+                                    .foregroundColor(.neonGreen)
+                                
+                                Text("Oh tu n'as pas encore de Bots !")
+                                    .font(.title2)
+                                    .fontWeight(.bold)
+                                    .foregroundColor(.white)
+                                    .multilineTextAlignment(.center)
+                                
+                                Text("Vas dans 'Explorer' pour pouvoir en ajouter")
+                                    .font(.body)
+                                    .foregroundColor(.gray)
+                                    .multilineTextAlignment(.center)
                             }
-                            .padding(.horizontal)
+                            .padding(.bottom, 50)
+                            .frame(width: geometry.size.width)
+                            .frame(minHeight: geometry.size.height)
+                        } else {
+                            // Bots list
+                            ScrollView {
+                                LazyVStack(spacing: 12) {
+                                    ForEach(filteredBots) { bot in
+                                        BotCard(bot: bot, iconAction: "person.slash", isAuthenticated: true, onAction: {
+                                            Task {
+                                                await SupabaseService.shared.deleteUserSavedBot(botId: bot.id)
+                                                DispatchQueue.main.async {
+                                                    setBots()
+                                                }
+                                            }
+                                        })
+                                    }
+                                }
+                                .padding(.horizontal)
+                            }
                         }
                     }
                 }
@@ -99,3 +120,4 @@ struct MyBotsView_Previews: PreviewProvider {
         MyBotsView()
     }
 }
+

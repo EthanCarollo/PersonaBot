@@ -40,6 +40,13 @@ class SupabaseClient:
         except :
             return None
 
+    def add_bot_to_saved(self, bot_id, user_id):
+        try :
+            return self.client.table('saved_bots').upsert({"bot_id": bot_id, "user_id": user_id}).execute()
+        except Exception as e :
+            logger.error(e)
+            return None
+
     def create_bot(self, user_id: str, bot_public_id: str, bot_name: str, description: str):
         # When I create a bot, I don't directly insert all Data in QDrant, I do it after cause the logics to talk with
         # ChatQueryService shouldn't be in the SupabaseClient

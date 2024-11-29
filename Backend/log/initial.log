@@ -182,3 +182,61 @@
 2024-11-28 22:36:15,875 - persona_bot - INFO - supabase_client.py:48 - Initialized SupabaseClient
 2024-11-28 22:36:15,899 - persona_bot - INFO - supabase_client.py:48 - Initialized SupabaseClient
 2024-11-28 22:36:15,911 - persona_bot - INFO - supabase_client.py:48 - Initialized SupabaseClient
+2024-11-29 13:08:32,852 - persona_bot - INFO - logger.py:81 -  SETUP LOGGER, will save the log file in file : log/2024-11-29.log
+2024-11-29 13:08:36,056 - persona_bot - INFO - supabase_client.py:60 - Initialized SupabaseClient
+2024-11-29 13:08:36,084 - persona_bot - INFO - supabase_client.py:60 - Initialized SupabaseClient
+2024-11-29 13:08:36,087 - persona_bot - INFO - supabase_client.py:60 - Initialized SupabaseClient
+2024-11-29 13:08:36,088 - persona_bot - INFO - supabase_client.py:60 - Initialized SupabaseClient
+2024-11-29 13:22:28,030 - persona_bot - INFO - logger.py:81 -  SETUP LOGGER, will save the log file in file : log/2024-11-29.log
+2024-11-29 13:22:30,543 - persona_bot - INFO - supabase_client.py:60 - Initialized SupabaseClient
+2024-11-29 13:22:30,586 - persona_bot - INFO - supabase_client.py:60 - Initialized SupabaseClient
+2024-11-29 13:22:30,588 - persona_bot - INFO - supabase_client.py:60 - Initialized SupabaseClient
+2024-11-29 13:22:30,588 - persona_bot - INFO - supabase_client.py:60 - Initialized SupabaseClient
+2024-11-29 13:26:31,278 - persona_bot - INFO - logger.py:81 -  SETUP LOGGER, will save the log file in file : log/2024-11-29.log
+2024-11-29 13:26:33,409 - persona_bot - INFO - supabase_client.py:60 - Initialized SupabaseClient
+2024-11-29 13:26:33,429 - persona_bot - INFO - supabase_client.py:60 - Initialized SupabaseClient
+2024-11-29 13:26:33,430 - persona_bot - INFO - supabase_client.py:60 - Initialized SupabaseClient
+2024-11-29 13:26:33,433 - persona_bot - INFO - supabase_client.py:60 - Initialized SupabaseClient
+2024-11-29 13:26:36,998 - persona_bot - INFO - logger.py:81 -  SETUP LOGGER, will save the log file in file : log/2024-11-29.log
+2024-11-29 13:26:38,819 - persona_bot - INFO - supabase_client.py:60 - Initialized SupabaseClient
+2024-11-29 13:26:38,837 - persona_bot - INFO - supabase_client.py:60 - Initialized SupabaseClient
+2024-11-29 13:26:38,838 - persona_bot - INFO - supabase_client.py:60 - Initialized SupabaseClient
+2024-11-29 13:26:38,839 - persona_bot - INFO - supabase_client.py:60 - Initialized SupabaseClient
+2024-11-29 13:30:32,964 - persona_bot - INFO - logger.py:81 -  SETUP LOGGER, will save the log file in file : log/2024-11-29.log
+2024-11-29 13:30:35,289 - persona_bot - INFO - supabase_client.py:60 - Initialized SupabaseClient
+2024-11-29 13:30:35,307 - persona_bot - INFO - supabase_client.py:60 - Initialized SupabaseClient
+2024-11-29 13:30:35,308 - persona_bot - INFO - supabase_client.py:60 - Initialized SupabaseClient
+2024-11-29 13:30:35,309 - persona_bot - INFO - supabase_client.py:60 - Initialized SupabaseClient
+2024-11-29 13:30:35,309 - persona_bot - INFO - supabase_client.py:60 - Initialized SupabaseClient
+2024-11-29 13:30:57,377 - persona_bot - INFO - logger.py:81 -  SETUP LOGGER, will save the log file in file : log/2024-11-29.log
+2024-11-29 13:30:59,057 - persona_bot - INFO - supabase_client.py:60 - Initialized SupabaseClient
+2024-11-29 13:30:59,075 - persona_bot - INFO - supabase_client.py:60 - Initialized SupabaseClient
+2024-11-29 13:30:59,076 - persona_bot - INFO - supabase_client.py:60 - Initialized SupabaseClient
+2024-11-29 13:30:59,076 - persona_bot - INFO - supabase_client.py:60 - Initialized SupabaseClient
+2024-11-29 13:30:59,077 - persona_bot - INFO - supabase_client.py:60 - Initialized SupabaseClient
+2024-11-29 13:31:08,697 - persona_bot - INFO - logger.py:81 -  SETUP LOGGER, will save the log file in file : log/2024-11-29.log
+2024-11-29 13:31:10,382 - persona_bot - INFO - supabase_client.py:60 - Initialized SupabaseClient
+2024-11-29 13:31:10,399 - persona_bot - INFO - supabase_client.py:60 - Initialized SupabaseClient
+2024-11-29 13:31:10,400 - persona_bot - INFO - supabase_client.py:60 - Initialized SupabaseClient
+2024-11-29 13:31:10,401 - persona_bot - INFO - supabase_client.py:60 - Initialized SupabaseClient
+2024-11-29 13:31:10,402 - persona_bot - INFO - supabase_client.py:60 - Initialized SupabaseClient
+2024-11-29 13:37:05,201 - persona_bot - INFO - logger.py:81 -  SETUP LOGGER, will save the log file in file : log/2024-11-29.log
+2024-11-29 13:37:07,515 - persona_bot - INFO - supabase_client.py:67 - Initialized SupabaseClient
+2024-11-29 13:37:07,534 - persona_bot - INFO - supabase_client.py:67 - Initialized SupabaseClient
+2024-11-29 13:37:07,535 - persona_bot - INFO - supabase_client.py:67 - Initialized SupabaseClient
+2024-11-29 13:37:07,535 - persona_bot - INFO - supabase_client.py:67 - Initialized SupabaseClient
+2024-11-29 13:37:07,537 - persona_bot - INFO - supabase_client.py:67 - Initialized SupabaseClient
+2024-11-29 13:37:34,073 - persona_bot - ERROR - supabase_client.py:47 - {'code': 'PGRST204', 'details': None, 'hint': None, 'message': "Could not find the 'bot_id' column of 'bots' in the schema cache"}
+2024-11-29 13:37:47,131 - persona_bot - INFO - logger.py:81 -  SETUP LOGGER, will save the log file in file : log/2024-11-29.log
+2024-11-29 13:37:49,170 - persona_bot - INFO - supabase_client.py:67 - Initialized SupabaseClient
+2024-11-29 13:37:49,187 - persona_bot - INFO - supabase_client.py:67 - Initialized SupabaseClient
+2024-11-29 13:37:49,188 - persona_bot - INFO - supabase_client.py:67 - Initialized SupabaseClient
+2024-11-29 13:37:49,189 - persona_bot - INFO - supabase_client.py:67 - Initialized SupabaseClient
+2024-11-29 13:37:49,190 - persona_bot - INFO - supabase_client.py:67 - Initialized SupabaseClient
+2024-11-29 13:37:52,508 - persona_bot - ERROR - supabase_client.py:47 - {'code': '42501', 'details': None, 'hint': None, 'message': 'new row violates row-level security policy for table "saved_bots"'}
+2024-11-29 13:38:52,289 - persona_bot - INFO - logger.py:81 -  SETUP LOGGER, will save the log file in file : log/2024-11-29.log
+2024-11-29 13:38:54,311 - persona_bot - INFO - supabase_client.py:67 - Initialized SupabaseClient
+2024-11-29 13:38:54,329 - persona_bot - INFO - supabase_client.py:67 - Initialized SupabaseClient
+2024-11-29 13:38:54,330 - persona_bot - INFO - supabase_client.py:67 - Initialized SupabaseClient
+2024-11-29 13:38:54,331 - persona_bot - INFO - supabase_client.py:67 - Initialized SupabaseClient
+2024-11-29 13:38:54,332 - persona_bot - INFO - supabase_client.py:67 - Initialized SupabaseClient

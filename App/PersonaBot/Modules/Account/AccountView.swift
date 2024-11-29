@@ -4,15 +4,32 @@
 //
 //  Created by eth on 28/11/2024.
 //
-
 import SwiftUI
 import SwiftKeychainWrapper
 import Supabase
 
+class AuthViewModel: ObservableObject {
+    @Published var isAuthenticated: Bool = false
+    @Published var isCheckingAuth: Bool = true
+    
+    init() {
+        checkAuthentication()
+    }
+    
+    func checkAuthentication() {
+        isCheckingAuth = true
+        Task {
+            self.isAuthenticated = await SupabaseService.shared.isAuthenticated()
+            DispatchQueue.main.async {
+                self.isCheckingAuth = false
+            }
+        }
+    }
+}
+
 struct AccountView: View {
-    @Binding var isAuthenticated: Bool
-    @Binding var showAuthView: Bool
-    @State private var isCheckingAuth = true
+    @EnvironmentObject var authViewModel: AuthViewModel
+    @State private var showAuthView = false
     @State private var username = ""
     @State private var isUpdatingUsername = false
     @State private var showUsernameUpdateAlert = false
@@ -23,14 +40,13 @@ struct AccountView: View {
     
     var body: some View {
         ZStack {
-            // Background
             Color.black.edgesIgnoringSafeArea(.all)
             
-            if isCheckingAuth {
+            if authViewModel.isCheckingAuth {
                 ProgressView()
                     .progressViewStyle(CircularProgressViewStyle(tint: .neonGreen))
                     .scaleEffect(2)
-            } else if isAuthenticated {
+            } else if authViewModel.isAuthenticated {
                 VStack(spacing: 20) {
                     // Profile section
                     VStack(spacing: 15) {
@@ -43,7 +59,6 @@ struct AccountView: View {
                             .fontWeight(.bold)
                             .foregroundColor(.white)
                         
-                        // Username TextField
                         TextField("Nom d'utilisateur", text: $username)
                             .foregroundColor(.white)
                             .padding()
@@ -56,7 +71,6 @@ struct AccountView: View {
                     }
                     .padding(.top, 50)
                     
-                    // Account options
                     VStack(spacing: 15) {
                         AccountOptionButton(icon: "bubble.left.and.bubble.right", text: "Mes Bots") {
                             showMyBotsSheet = true
@@ -74,6 +88,7 @@ struct AccountView: View {
                 }
                 .sheet(isPresented: $showSettingsSheet) {
                     SettingsView()
+                        .environmentObject(authViewModel)
                 }
             } else {
                 VStack(spacing: 20) {
@@ -102,7 +117,11 @@ struct AccountView: View {
                     
                     Spacer()
                 }
-                .padding(.bottom, 100) // Increased to account for NavBar
+                .padding(.bottom, 100)
+                .sheet(isPresented: $showAuthView) {
+                    AuthView()
+                        .environmentObject(authViewModel)
+                }
             }
             
             if isUpdatingUsername {
@@ -112,8 +131,7 @@ struct AccountView: View {
             }
         }
         .navigationBarHidden(true)
-        .onAppear{
-            checkAuthentication()
+        .onAppear {
             setUsername()
         }
         .alert(isPresented: $showUsernameUpdateAlert) {
@@ -122,21 +140,14 @@ struct AccountView: View {
                   dismissButton: .default(Text("OK")))
         }
     }
-
     
-    private func checkAuthentication() {
-        isCheckingAuth = true
-        Task {
-            self.isAuthenticated = await SupabaseService.shared.isAuthenticated()
-            isCheckingAuth = false
-        }
-    }
-    
-    private func setUsername(){
+    private func setUsername() {
         Task {
             let profile = await SupabaseService.shared.getProfile()
             if let userProfile = profile {
-                username = userProfile.username
+                DispatchQueue.main.async {
+                    self.username = userProfile.username
+                }
             }
         }
     }
@@ -149,6 +160,7 @@ struct AccountView: View {
                 DispatchQueue.main.async {
                     self.isUpdatingUsername = false
                     self.usernameUpdateMessage = "Nom d'utilisateur mis à jour avec succès"
+                    self.showUsernameUpdateAlert = true
                 }
             } catch {
                 print("Error updating username: \(error)")
@@ -158,17 +170,6 @@ struct AccountView: View {
                     self.showUsernameUpdateAlert = true
                 }
             }
-        }
-    }
-    
-    private func login() async {
-        
-    }
-    
-    private func logout() {
-        Task {
-            await SupabaseService.shared.logout()
-            self.isAuthenticated = false
         }
     }
 }
@@ -200,5 +201,4 @@ struct AccountOptionButton: View {
         }
     }
 }
-
 

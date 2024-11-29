@@ -9,8 +9,7 @@ import SwiftUI
 import Combine
 
 struct ContentView: View {
-    @State private var isAuthenticated = false
-    @State private var showAuthView = false
+    @StateObject private var authViewModel = AuthViewModel()
     @State private var selectedTab = 0
     
     var body: some View {
@@ -25,7 +24,8 @@ struct ContentView: View {
                 ChatView()
                     .tag(2)
                 
-                AccountView(isAuthenticated: $isAuthenticated, showAuthView: $showAuthView)
+                AccountView()
+                    .environmentObject(authViewModel)
                     .tag(3)
             }
             .tabViewStyle(PageTabViewStyle(indexDisplayMode: .never))
@@ -35,9 +35,6 @@ struct ContentView: View {
                 .padding(.bottom, safeAreaBottomPadding())
         }
         .edgesIgnoringSafeArea(.bottom)
-        .sheet(isPresented: $showAuthView) {
-            AuthView(isAuthenticated: $isAuthenticated)
-        }
         .navigationBarHidden(true)
         .navigationBarBackButtonHidden(true)
     }

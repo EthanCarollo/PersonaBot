@@ -10,23 +10,20 @@ import SwiftUI
 
 struct SettingsView: View {
     @Environment(\.presentationMode) var presentationMode
+    @EnvironmentObject var authViewModel: AuthViewModel
     @State private var notificationsEnabled = true
     @State private var darkModeEnabled = true
 
     var body: some View {
         NavigationView {
             Form {
-                Section(header: Text("Préférences")) {
-                    Toggle("Notifications", isOn: $notificationsEnabled)
-                    Toggle("Mode sombre", isOn: $darkModeEnabled)
-                }
-
                 Section(header: Text("Compte")) {
-                    Button("Changer le mot de passe") {
-                        // Action to change password
-                    }
                     Button("Déconnexion") {
-                        // Action to log out
+                        Task {
+                            await SupabaseService.shared.logout()
+                        }
+                        authViewModel.isAuthenticated = false
+                        presentationMode.wrappedValue.dismiss()
                     }
                     .foregroundColor(.red)
                 }
