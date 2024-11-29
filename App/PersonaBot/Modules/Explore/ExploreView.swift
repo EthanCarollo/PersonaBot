@@ -7,14 +7,6 @@
 import SwiftUI
 import SwiftKeychainWrapper
 
-struct Bot: Identifiable, Equatable {
-    let id = UUID()
-    let name: String
-    let description: String
-    let icon: String
-    var isSaved: Bool
-}
-
 class ExploreViewModel: ObservableObject {
     @Published var bots: [Bot]
     @Published var searchText: String = ""
@@ -22,20 +14,15 @@ class ExploreViewModel: ObservableObject {
     @Published var isCheckingAuth: Bool = false
     
     init() {
-        self.bots = [
-            Bot(name: "Ugo sans H", description: "Assistant développeur SwiftUI sarcastique et passionné", icon: "terminal", isSaved: false),
-            Bot(name: "Chef Michel", description: "Expert culinaire français, spécialiste de la cuisine traditionnelle", icon: "fork.knife", isSaved: false),
-            Bot(name: "Prof. Einstein", description: "Tuteur de physique et mathématiques", icon: "function", isSaved: false),
-            Bot(name: "Dr. Watson", description: "Assistant médical pour des conseils de santé généraux", icon: "cross.case", isSaved: false),
-            Bot(name: "Eco Guide", description: "Conseiller en développement durable et écologie", icon: "leaf", isSaved: false)
-        ]
+        self.bots = []
         checkAuthentication()
+        setBots()
     }
     
     func toggleSave(for bot: Bot) {
         if isAuthenticated {
             if let index = bots.firstIndex(where: { $0.id == bot.id }) {
-                bots[index].isSaved.toggle()
+                // bots[index].isSaved.toggle()
             }
         }
     }
@@ -46,6 +33,17 @@ class ExploreViewModel: ObservableObject {
         }
         return bots.filter { $0.name.localizedCaseInsensitiveContains(searchText) ||
                              $0.description.localizedCaseInsensitiveContains(searchText) }
+    }
+    
+    func setBots() {
+        Task {
+            let botsRequest = await SupabaseService.shared.getBots()
+            if let fetchedBots = botsRequest {
+                await MainActor.run {
+                    self.bots = fetchedBots
+                }
+            }
+        }
     }
     
     func checkAuthentication() {

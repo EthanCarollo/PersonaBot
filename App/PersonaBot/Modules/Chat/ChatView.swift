@@ -15,6 +15,7 @@ struct ChatView: View {
     var body: some View {
         GeometryReader { geometry in
             VStack(spacing: 0) {
+                botSelectionView
                 chatMessagesView.padding(.top, 16)
                 messageInputView(geometry: geometry)
                 Spacer(minLength: keyboardHeight > 0 ? keyboardHeight - 4 : 78)
@@ -32,6 +33,41 @@ struct ChatView: View {
                 removeKeyboardObservers()
             }
         }
+    }
+    
+    private var botSelectionView: some View {
+        ScrollView(.horizontal, showsIndicators: false) {
+            HStack(spacing: 12) {
+                ForEach(viewModel.bots) { bot in
+                    Button(action: {
+                        viewModel.selectedBot = bot
+                    }) {
+                        VStack(spacing: 8) {
+                            ZStack {
+                                Circle()
+                                    .fill(viewModel.selectedBot?.id == bot.id ? Color.green.opacity(0.3) : Color.black)
+                                    .frame(width: 60, height: 60)
+                                Text(bot.icon)
+                                    .font(.system(size: 30))
+                            }
+                            .overlay(
+                                Circle()
+                                    .stroke(viewModel.selectedBot?.id == bot.id ? Color.green : Color.gray, lineWidth: 2)
+                            )
+                            
+                            Text(bot.name)
+                                .font(.caption)
+                                .foregroundColor(viewModel.selectedBot?.id == bot.id ? .green : .white)
+                        }
+                    }
+                    .frame(width: 80)
+                }
+            }
+            .padding(.horizontal)
+            .padding(.top, 16) // Ajout de padding en haut
+        }
+        .frame(height: 120) // Augmentation de la hauteur pour accommoder le padding supplémentaire
+        .background(Color.black.edgesIgnoringSafeArea(.horizontal))
     }
     
     private var chatMessagesView: some View {
@@ -119,78 +155,6 @@ struct ChatView: View {
     private func removeKeyboardObservers() {
         NotificationCenter.default.removeObserver(self, name: UIResponder.keyboardWillShowNotification, object: nil)
         NotificationCenter.default.removeObserver(self, name: UIResponder.keyboardWillHideNotification, object: nil)
-    }
-}
-
-class ChatViewModel: ObservableObject {
-    @Published var messageText = ""
-    @Published var messages: [ChatMessage] = []
-    @Published var isLoading = false
-    var scrollProxy: ScrollViewProxy?
-    
-    func sendMessage() {
-        guard !messageText.isEmpty else { return }
-        let newMessage = ChatMessage(id: UUID(), content: messageText, isUser: true)
-        messages.append(newMessage)
-        
-        let currentMessage = messageText
-        messageText = ""
-        isLoading = true
-        
-        Task {
-            do {
-                let response = try await sendMessageToBackend(message: currentMessage)
-                print(response)
-                await MainActor.run {
-                    let aiResponse = ChatMessage(id: UUID(), content: response, isUser: false)
-                    messages.append(aiResponse)
-                    isLoading = false
-                }
-            } catch {
-                print("Error: \(error.localizedDescription)")
-                await MainActor.run {
-                    let errorMessage = ChatMessage(id: UUID(), content: "Désolé, une erreur s'est produite. Veuillez réessayer.", isUser: false)
-                    messages.append(errorMessage)
-                    isLoading = false
-                }
-            }
-        }
-    }
-    
-    private func sendMessageToBackend(message: String) async throws -> String {
-        guard let url = URL(string: Config.backendURL + "/chat") else {
-            throw URLError(.badURL)
-        }
-        
-        var request = URLRequest(url: url)
-        request.httpMethod = "POST"
-        request.setValue("application/json", forHTTPHeaderField: "Content-Type")
-        
-        let body = ["text": message]
-        request.httpBody = try JSONEncoder().encode(body)
-        
-        let (data, _) = try await URLSession.shared.data(for: request)
-        let response = try JSONDecoder().decode(BackendResponse.self, from: data)
-        return response.response
-    }
-}
-
-struct ChatBubble: View {
-    let message: ChatMessage
-    
-    var body: some View {
-        HStack {
-            if message.isUser { Spacer() }
-            
-            Text(message.content)
-                .padding()
-                .background(message.isUser ? Color.neonGreen : Color.white.opacity(0.1))
-                .foregroundColor(message.isUser ? .black : .white)
-                .cornerRadius(20)
-                .shadow(color: message.isUser ? Color.neonGreen.opacity(0.3) : .clear, radius: 10)
-            
-            if !message.isUser { Spacer() }
-        }
     }
 }
 

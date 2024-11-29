@@ -63,6 +63,36 @@ class SupabaseService {
             print("Error logging out: \(error)")
         }
     }
+    
+    func getBots() async -> [Bot]? {
+        do {
+            let bots: [Bot] = try await self.client
+              .from("bots")
+              .select("id, bot_public_id, name, description, icon")
+              .execute()
+              .value
+            return bots
+        } catch {
+            print(error)
+            return nil
+        }
+    }
+    
+    func getProfile() async -> Profile? {
+        do {
+            let user = try await self.client.auth.user()
+            let profile: [Profile] = try await self.client
+              .from("profiles")
+              .select("id, username")
+              .eq("id", value: user.id)
+              .execute()
+              .value
+            return profile.first
+        } catch {
+            print(error)
+            return nil
+        }
+    }
 
     /// Updates the username in the profiles table.
     func updateUsername(newUsername: String) {
@@ -91,6 +121,19 @@ class SupabaseService {
             }
         }
     }
+}
+
+struct Bot : Decodable, Identifiable, Hashable {
+    let id: UUID
+    let bot_public_id: String
+    let name: String
+    let description: String
+    let icon: String
+}
+
+struct Profile: Decodable {
+    let id: UUID
+    let username: String
 }
 
 enum AuthError: Error {

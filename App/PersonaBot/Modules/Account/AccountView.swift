@@ -114,7 +114,10 @@ struct AccountView: View {
             }
         }
         .navigationBarHidden(true)
-        .onAppear(perform: checkAuthentication)
+        .onAppear{
+            checkAuthentication()
+            setUsername()
+        }
         .alert(isPresented: $showUsernameUpdateAlert) {
             Alert(title: Text("Mise à jour du nom d'utilisateur"),
                   message: Text(usernameUpdateMessage),
@@ -128,6 +131,15 @@ struct AccountView: View {
             self.isAuthenticated = await SupabaseService.shared.isAuthenticated()
         }
         isCheckingAuth = false
+    }
+    
+    private func setUsername(){
+        Task {
+            let profile = await SupabaseService.shared.getProfile()
+            if let userProfile = profile {
+                username = userProfile.username
+            }
+        }
     }
     
     private func updateUsername() {

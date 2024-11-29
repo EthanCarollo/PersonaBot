@@ -36,9 +36,13 @@ struct BotCard: View {
                 Spacer()
                 
                 Button(action: onSave) {
+                    Image(systemName: "bookmark")
+                        .font(.system(size: 20))
+                        .foregroundColor(.gray)
+                    /*
                     Image(systemName: bot.isSaved ? "bookmark.fill" : "bookmark")
                         .font(.system(size: 20))
-                        .foregroundColor(bot.isSaved && isAuthenticated ? .neonGreen : .gray)
+                        .foregroundColor(bot.isSaved && isAuthenticated ? .neonGreen : .gray)*/
                 }
             }
         }
