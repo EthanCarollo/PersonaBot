@@ -11,34 +11,21 @@ class ChatViewModel: ObservableObject {
     @Published var messageText = ""
     @Published var messages: [ChatMessage] = []
     @Published var isLoading = false
-    @Published var bots: [Bot] = []
     @Published var selectedBot: Bot?
     var scrollProxy: ScrollViewProxy?
     
+    private var cancellables = Set<AnyCancellable>()
+    
+    deinit {
+        cancellables.forEach { $0.cancel() }
+    }
+    
     init() {
-        fetchBots()
-    }
-    
-    func fetchBots() {
-        // Simulated API call to fetch bots
-        // In a real app, you would make an actual network request here
-        self.bots = [
-            Bot(id: UUID(), bot_public_id: "classic", name: "Assistant", description: "General assistant", icon: "person.fill"),
-        ]
-        self.selectedBot = self.bots.first
-        
-        Task {
-            let botsRequest = await SupabaseService.shared.getUserSavedBots()
-            if let fetchedBots = botsRequest {
-                await MainActor.run {
-                    self.bots = self.bots + fetchedBots
-                }
-            }
-        }
-    }
-    
-    func onAppear(){
-        fetchBots()
+        BotsViewModel.shared.$unsavedBots
+            .receive(on: DispatchQueue.main)
+            .sink { [weak self] _ in
+                self?.objectWillChange.send()
+            }.store(in: &cancellables)
     }
     
     func sendMessage() {

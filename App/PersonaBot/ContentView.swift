@@ -10,6 +10,7 @@ import Combine
 
 struct ContentView: View {
     @StateObject private var authViewModel = AuthViewModel()
+    @StateObject private var botsViewModel = BotsViewModel()
     @State private var selectedTab = 0
     
     var body: some View {

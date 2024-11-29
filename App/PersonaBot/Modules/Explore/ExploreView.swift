@@ -4,27 +4,37 @@
 //
 //  Created by eth on 28/11/2024.
 //
+import Combine
 import SwiftUI
 import SwiftKeychainWrapper
 
 class ExploreViewModel: ObservableObject {
-    @Published var bots: [Bot]
     @Published var searchText: String = ""
     @Published var isAuthenticated: Bool = false
     @Published var isLoading: Bool = false
     @Published var isCheckingAuth: Bool = false
     
+    private var cancellables = Set<AnyCancellable>()
+    
     init() {
-        self.bots = []
-        checkAuthentication()
-        setBots()
+        self.checkAuthentication()
+        
+        BotsViewModel.shared.$unsavedBots
+            .receive(on: DispatchQueue.main)
+            .sink { [weak self] _ in
+                self?.objectWillChange.send()
+            }.store(in: &cancellables)
+    }
+    
+    deinit {
+        cancellables.forEach { $0.cancel() }
     }
     
     var filteredBots: [Bot] {
         if searchText.isEmpty {
-            return bots
+            return BotsViewModel.shared.unsavedBots
         }
-        return bots.filter {
+        return BotsViewModel.shared.unsavedBots.filter {
             if let botDescription = $0.description {
                 return $0.name.localizedCaseInsensitiveContains(searchText) ||
                 botDescription.localizedCaseInsensitiveContains(searchText)
@@ -34,20 +44,16 @@ class ExploreViewModel: ObservableObject {
         }
     }
     
-    func setBots() {
-        isLoading = true // Set isLoading to true before fetching data
+    func saveBot(bot: Bot) {
+        print("save bot : \(bot)")
         Task {
-            let botsRequest = await SupabaseService.shared.getUserUnsavedBots()
-            if let fetchedBots = botsRequest {
-                await MainActor.run {
-                    self.bots = fetchedBots
-                    self.isLoading = false // Set isLoading to false after successful fetch
-                }
-            } else {
-                await MainActor.run {
-                    self.isLoading = false // Set isLoading to false even if fetching fails
-                }
-            }
+            try await BackendService.shared.saveBot(botId: bot.id)
+        }
+        BotsViewModel.shared.unsavedBots.removeAll { $0.id == bot.id }
+        if(BotsViewModel.shared.savedBots.first?.bot_public_id == "classic"){
+            BotsViewModel.shared.savedBots = [bot]
+        } else {
+            BotsViewModel.shared.savedBots.append(bot)
         }
     }
     
@@ -117,13 +123,13 @@ struct ExploreView: View {
                         LazyVStack(spacing: 16) {
                             ForEach(viewModel.filteredBots) { bot in
                                 BotCard(bot: bot, iconAction: "bookmark", isAuthenticated: viewModel.isAuthenticated, onAction: {
-                                    Task {
-                                        do {
-                                            try await BackendService.shared.saveBot(botId: bot.id)
-                                        } catch {
-                                            print(error)
-                                        }
+                                    
+                                    do {
+                                        viewModel.saveBot(bot: bot)
+                                    } catch {
+                                        print(error)
                                     }
+                                    
                                 })
                             }
                         }
@@ -136,7 +142,9 @@ struct ExploreView: View {
                 
                 Spacer()
             }.onAppear(perform: {
-                viewModel.setBots()
+                Task {
+                    await BotsViewModel.shared.fetchBots()
+                }
             })
             
             if showAuthAlert {

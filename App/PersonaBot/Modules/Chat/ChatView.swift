@@ -28,7 +28,6 @@ struct ChatView: View {
             }
             .onAppear {
                 setupKeyboardObservers()
-                viewModel.onAppear()
             }
             .onDisappear {
                 removeKeyboardObservers()
@@ -39,7 +38,7 @@ struct ChatView: View {
     private var botSelectionView: some View {
         ScrollView(.horizontal, showsIndicators: false) {
             HStack(spacing: 12) {
-                ForEach(viewModel.bots) { bot in
+                ForEach(BotsViewModel.shared.savedBots) { bot in
                     Button(action: {
                         viewModel.selectedBot = bot
                     }) {

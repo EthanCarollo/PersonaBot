@@ -114,7 +114,13 @@ struct SplashScreen: View {
                     }
                 }
             }
+            .onAppear(perform: {
+                Task {
+                    await BotsViewModel.shared.fetchBots()
+                }
+            })
         }
         .navigationViewStyle(StackNavigationViewStyle())
+        
     }
 }
