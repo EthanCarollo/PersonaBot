@@ -118,6 +118,23 @@ class SupabaseService {
         }
     }
     
+    func deleteUserSavedBot(botId: UUID) async -> Bool {
+        do {
+            let user = try await self.client.auth.user()
+            try await self.client
+                .from("saved_bots")
+                .delete()
+                .eq("user_id", value: user.id)
+                .eq("bot_id", value: botId)
+                .execute()
+            
+            return true
+        } catch {
+            print("Erreur lors de la suppression du bot : \(error)")
+            return false
+        }
+    }
+    
     func getBots() async -> [Bot]? {
         do {
             let bots: [Bot] = try await self.client

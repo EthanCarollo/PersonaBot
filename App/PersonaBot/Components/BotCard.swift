@@ -9,8 +9,9 @@ import SwiftUI
 
 struct BotCard: View {
     let bot: Bot
+    let iconAction: String
     let isAuthenticated: Bool
-    let onSave: () -> Void
+    let onAction: () -> Void
     
     var body: some View {
         VStack(alignment: .leading, spacing: 12) {
@@ -35,8 +36,8 @@ struct BotCard: View {
                 
                 Spacer()
                 
-                Button(action: onSave) {
-                    Image(systemName: "bookmark")
+                Button(action: onAction) {
+                    Image(systemName: iconAction)
                         .font(.system(size: 20))
                         .foregroundColor(.neonGreen)
                 }

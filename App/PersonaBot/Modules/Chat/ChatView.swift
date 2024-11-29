@@ -28,6 +28,7 @@ struct ChatView: View {
             }
             .onAppear {
                 setupKeyboardObservers()
+                viewModel.onAppear()
             }
             .onDisappear {
                 removeKeyboardObservers()

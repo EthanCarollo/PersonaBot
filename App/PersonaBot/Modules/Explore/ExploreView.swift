@@ -104,7 +104,7 @@ struct ExploreView: View {
                 ScrollView {
                     LazyVStack(spacing: 16) {
                         ForEach(viewModel.filteredBots) { bot in
-                            BotCard(bot: bot, isAuthenticated: viewModel.isAuthenticated) {
+                            BotCard(bot: bot, iconAction: "bookmark", isAuthenticated: viewModel.isAuthenticated) {
                                 if viewModel.isAuthenticated {
                                     viewModel.toggleSave(for: bot)
                                 } else {

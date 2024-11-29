@@ -37,6 +37,10 @@ class ChatViewModel: ObservableObject {
         }
     }
     
+    func onAppear(){
+        fetchBots()
+    }
+    
     func sendMessage() {
         guard !messageText.isEmpty, let selectedBot = selectedBot else { return }
         let newMessage = ChatMessage(id: UUID(), content: messageText, isUser: true)
