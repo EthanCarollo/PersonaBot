@@ -18,6 +18,9 @@ struct AccountView: View {
     @State private var showUsernameUpdateAlert = false
     @State private var usernameUpdateMessage = ""
     
+    @State private var showMyBotsSheet = false
+    @State private var showSettingsSheet = false
+    
     var body: some View {
         ZStack {
             // Background
@@ -55,27 +58,22 @@ struct AccountView: View {
                     
                     // Account options
                     VStack(spacing: 15) {
-                        AccountOptionButton(icon: "gear", text: "Paramètres")
-                        AccountOptionButton(icon: "bell", text: "Notifications")
-                        AccountOptionButton(icon: "lock", text: "Confidentialité")
-                        AccountOptionButton(icon: "questionmark.circle", text: "Aide")
+                        AccountOptionButton(icon: "bubble.left.and.bubble.right", text: "Mes Bots") {
+                            showMyBotsSheet = true
+                        }
+                        AccountOptionButton(icon: "gear", text: "Paramètres") {
+                            showSettingsSheet = true
+                        }
                     }
                     .padding(.top, 30)
                     
                     Spacer()
-                    
-                    // Logout button
-                    Button(action: logout) {
-                        Text("Déconnexion")
-                            .font(.system(size: 17, weight: .semibold))
-                            .foregroundColor(.white)
-                            .frame(maxWidth: .infinity)
-                            .padding(.vertical, 16)
-                            .background(Color.red.opacity(0.8))
-                            .cornerRadius(30)
-                            .padding(.horizontal)
-                    }
-                    .padding(.bottom, 100) // Increased to account for NavBar
+                }
+                .sheet(isPresented: $showMyBotsSheet) {
+                    MyBotsView()
+                }
+                .sheet(isPresented: $showSettingsSheet) {
+                    SettingsView()
                 }
             } else {
                 VStack(spacing: 20) {
@@ -124,6 +122,7 @@ struct AccountView: View {
                   dismissButton: .default(Text("OK")))
         }
     }
+
     
     private func checkAuthentication() {
         isCheckingAuth = true
@@ -177,9 +176,10 @@ struct AccountView: View {
 struct AccountOptionButton: View {
     let icon: String
     let text: String
+    let action: () -> Void
     
     var body: some View {
-        Button(action: {}) {
+        Button(action: action) {
             HStack {
                 Image(systemName: icon)
                     .foregroundColor(Color.neonGreen)
@@ -200,6 +200,5 @@ struct AccountOptionButton: View {
         }
     }
 }
-
 
 
