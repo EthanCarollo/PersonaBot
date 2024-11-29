@@ -8,6 +8,6 @@
 import Foundation
 
 struct Config {
-    static let backendURL = "http://192.168.74.138:5001"
+    static let backendURL = "http://192.168.1.152:5001"
 }
 

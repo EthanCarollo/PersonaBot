@@ -36,6 +36,7 @@ struct AccountView: View {
     @State private var usernameUpdateMessage = ""
     
     @State private var showMyBotsSheet = false
+    @State private var showCreateBotSheet = false
     @State private var showSettingsSheet = false
     
     var body: some View {
@@ -75,6 +76,9 @@ struct AccountView: View {
                         AccountOptionButton(icon: "bubble.left.and.bubble.right", text: "Mes Bots") {
                             showMyBotsSheet = true
                         }
+                        AccountOptionButton(icon: "person.badge.plus", text: "Créer un Bot") {
+                            showCreateBotSheet = true
+                        }
                         AccountOptionButton(icon: "gear", text: "Paramètres") {
                             showSettingsSheet = true
                         }
@@ -82,6 +86,9 @@ struct AccountView: View {
                     .padding(.top, 30)
                     
                     Spacer()
+                }
+                .sheet(isPresented: $showCreateBotSheet) {
+                    CreateBotView()
                 }
                 .sheet(isPresented: $showMyBotsSheet) {
                     MyBotsView()
