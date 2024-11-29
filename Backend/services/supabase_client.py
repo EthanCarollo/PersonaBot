@@ -63,6 +63,6 @@ class SupabaseClient:
     @staticmethod
     def get_instance():
         if SupabaseClient._instance is None:
+            logger.info("Initialized SupabaseClient")
             SupabaseClient._instance = SupabaseClient()
-        logger.info("Initialized SupabaseClient")
         return SupabaseClient._instance

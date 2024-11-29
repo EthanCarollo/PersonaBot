@@ -29,12 +29,19 @@ def add_bot():
     # this field isnt necessary so i get it and if he is not here, i just don't use it
     bot_description = data.get("bot_description")
 
+    bot_knowledge = data.get("bot_name")
+    if not bot_knowledge:
+        return jsonify({"error": "Missing 'bot_knowledge'"}), 400
+
     token = data.get('token')
     supabase_profile = supabase_client.get_profile_from_jwt(token)
 
     if not supabase_profile:
         return jsonify({"error": "Not a good token !"}), 400
 
-    supabase_client.create_bot(supabase_profile.data["id"], bot_public_id, bot_name)
+    supabase_client.create_bot(supabase_profile.data["id"], bot_public_id, bot_name, bot_description)
+    chatqueryService : ChatQueryService = ChatQueryService()
+    for knowledge in bot_knowledge:
+        chatqueryService.upsert_node(knowledge)
 
     return jsonify({"success": "Success !"})
