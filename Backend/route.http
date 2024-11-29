@@ -1,0 +1,31 @@
+// Pour tester les routes en vif avec HTTP yak
+
+### GET Request (récuperer les datas d'un bot en gros dans l'idée, chaque node)
+GET http://localhost:5001/bot/data
+Content-Type: application/json
+
+{
+    "bot_public_id": "cook_bot"
+}
+
+###
+
+### POST Request (ajouter de nouvelles données)
+POST http://localhost:5001/bot/data
+Content-Type: application/json
+
+{
+    "new_data": "Pâtes à la bolognaise, Qui dit pâtes à la bolognaise dit sauce achetée directement dans le magasin. Et bien non. Chez Cuisine AZ nous prônons le fait-maison. Alors, avant de contester et de dire que vous n'avez pas le temps, regardez la recette. Vous verrez, c'est simple comme tout ! Cette recette vous est proposée par Dominique Boute, nutritionniste et fondateur de monregimeperso.fr Valeur calorique pour une personne : 265 kcal",
+    "bot_public_id": "cook_bot"
+}
+
+###
+
+### POST Request (question au bot)
+POST http://localhost:5001/chat_with_bot
+Content-Type: application/json
+
+{
+    "text": "Qu'est ce que Cuisine AZ prone pour la sauce bolognaise ?",
+    "bot_public_id": "cook_bot"
+}

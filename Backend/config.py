@@ -5,6 +5,8 @@ from llama_index.core import Settings
 
 load_dotenv()
 
+DEBUG_MODE = os.environ.get("DEBUG_MODE", "False") == "True"
+
 SUPABASE_URL = os.environ.get("SUPABASE_URL", None)
 SUPABASE_KEY = os.environ.get("SUPABASE_KEY", None)
 SUPABASE_JWT_SECRET = os.environ.get("SUPABASE_JWT_SECRET", None)

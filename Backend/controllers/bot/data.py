@@ -8,34 +8,43 @@ import logging
 import os
 
 logger = logging.getLogger("persona_bot")
-chat_bp = Blueprint('chat_bp', __name__)
+bot_data_bp = Blueprint('bot_data_bp', __name__)
 supabase_client: SupabaseClient = SupabaseClient.get_instance()
 
-@chat_bp.route('/chat', methods=['POST'])
-def chat():
+@bot_data_bp.route('/bot/data', methods=['GET'])
+def get_bot_data():
     data = request.json
 
-    text = data.get('text')
-    if not text:
-        return jsonify({"error": "Missing 'text'"}), 400
+    bot = data.get("bot_public_id")
+    if not bot:
+        return jsonify({"error": "Missing 'bot'"}), 400
     
-    result = send_gpt(text)
+    bot_information = supabase_client.get_bot_with_public_id(bot)
+    if not bot_information :
+        return jsonify({"error": "Bot doesn't exist, weird."}), 400
 
+    chatQueryService : ChatQueryService = ChatQueryService(bot_information.data["bot_public_id"])
+    all_information = chatQueryService.get_all_information()
+
+    response_data = None
+    if isinstance(all_information, list):
+            # Convert each Record in the list to a dictionary
+            response_data = [{ "id": record.id, "payload": json.loads(record.payload["_node_content"])["text"] } for record in all_information]
+       
     # This route can be called even if the user isn't connected so we retire the token part
     # token = data.get('token')
     
     return jsonify({
-        "response": result
+        "response": response_data
     })
 
-
-@chat_bp.route('/chat_with_bot', methods=['POST'])
+@bot_data_bp.route('/bot/data', methods=['POST'])
 def chat_with_bot():
     data = request.json
 
-    text = data.get('text')
-    if not text:
-        return jsonify({"error": "Missing 'text'"}), 400
+    new_data = data.get('new_data')
+    if not new_data:
+        return jsonify({"error": "Missing 'new_data'"}), 400
     
     bot = data.get("bot_public_id")
     if not bot:
@@ -46,15 +55,13 @@ def chat_with_bot():
         return jsonify({"error": "Bot doesn't exist, weird."}), 400
 
     chatQueryService : ChatQueryService = ChatQueryService(bot_information.data["bot_public_id"])
+    chatQueryService.upsert_node(new_data)
 
-    result = chatQueryService.chat(text)
 
     # This route can be called even if the user isn't connected so we retire the token part
     # token = data.get('token')
     
-    # Result is of type AgentChatResponse 
-    # https://docs.llamaindex.ai/en/stable/api_reference/chat_engines/
     return jsonify({
-        "response": result.response
+        "response": "noice insertion noice"
     })
 
