@@ -23,11 +23,18 @@ class ChatViewModel: ObservableObject {
         // Simulated API call to fetch bots
         // In a real app, you would make an actual network request here
         self.bots = [
-            Bot(id: UUID(), bot_public_id: "bot1", name: "Assistant", description: "General assistant", icon: "🤖"),
-            Bot(id: UUID(), bot_public_id: "bot2", name: "Coder", description: "Coding assistant", icon: "💻"),
-            Bot(id: UUID(), bot_public_id: "bot3", name: "Writer", description: "Writing assistant", icon: "✍️")
+            Bot(id: UUID(), bot_public_id: "classic", name: "Assistant", description: "General assistant", icon: "person.fill"),
         ]
         self.selectedBot = self.bots.first
+        
+        Task {
+            let botsRequest = await SupabaseService.shared.getUserSavedBots()
+            if let fetchedBots = botsRequest {
+                await MainActor.run {
+                    self.bots = self.bots + fetchedBots
+                }
+            }
+        }
     }
     
     func sendMessage() {
@@ -60,7 +67,9 @@ class ChatViewModel: ObservableObject {
     }
     
     private func sendMessageToBackend(message: String, botPublicId: String) async throws -> String {
-        guard let url = URL(string: Config.backendURL + "/chat") else {
+        // Déterminer l'URL en fonction de l'ID du bot, si c'est le classic, alors on va just chatter normalement
+        let endpoint = botPublicId == "classic" ? "/chat" : "/chat_with_bot"
+        guard let url = URL(string: Config.backendURL + endpoint) else {
             throw URLError(.badURL)
         }
         
@@ -75,5 +84,6 @@ class ChatViewModel: ObservableObject {
         let response = try JSONDecoder().decode(BackendResponse.self, from: data)
         return response.response
     }
+
 }
 

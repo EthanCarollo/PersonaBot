@@ -47,8 +47,12 @@ struct ChatView: View {
                                 Circle()
                                     .fill(viewModel.selectedBot?.id == bot.id ? Color.green.opacity(0.3) : Color.black)
                                     .frame(width: 60, height: 60)
-                                Text(bot.icon)
-                                    .font(.system(size: 30))
+                                
+                                Image(systemName: bot.icon)
+                                    .resizable()
+                                    .foregroundColor(.white)
+                                    .aspectRatio(contentMode: .fit)
+                                    .frame(width: 30, height: 30)
                             }
                             .overlay(
                                 Circle()

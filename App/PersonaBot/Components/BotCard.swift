@@ -27,7 +27,7 @@ struct BotCard: View {
                         .font(.system(size: 16, weight: .bold))
                         .foregroundColor(.white)
                     
-                    Text(bot.description)
+                    Text(bot.description ?? "")
                         .font(.system(size: 14))
                         .foregroundColor(.gray)
                         .lineLimit(2)
@@ -38,11 +38,7 @@ struct BotCard: View {
                 Button(action: onSave) {
                     Image(systemName: "bookmark")
                         .font(.system(size: 20))
-                        .foregroundColor(.gray)
-                    /*
-                    Image(systemName: bot.isSaved ? "bookmark.fill" : "bookmark")
-                        .font(.system(size: 20))
-                        .foregroundColor(bot.isSaved && isAuthenticated ? .neonGreen : .gray)*/
+                        .foregroundColor(.neonGreen)
                 }
             }
         }

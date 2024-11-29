@@ -64,13 +64,74 @@ class SupabaseService {
         }
     }
     
+    func getUserUnsavedBots() async -> [Bot]? {
+        do {
+            let user = try await self.client.auth.user()
+            
+            let savedBots: [SavedBot] = try await self.client
+                .from("saved_bots")
+                .select("user_id, bot_id")
+                .eq("user_id", value: user.id)
+                .execute()
+                .value
+            
+            let savedBotIds = savedBots.map { $0.bot_id }
+            
+            let allBots: [Bot] = try await self.client
+                .from("bots")
+                .select("id, bot_public_id, name, description, icon")
+                .execute()
+                .value
+            let unsavedBots = allBots.filter { !savedBotIds.contains($0.id) }
+            
+            return unsavedBots
+        } catch {
+            print("Error fetching unsaved bots: \(error)")
+            return nil
+        }
+    }
+    
+    func getUserSavedBots() async -> [Bot]? {
+        do {
+            let user = try await self.client.auth.user()
+            let saved_bots: [SavedBot] = try await self.client
+                .from("saved_bots")
+                .select("user_id, bot_id")
+                .eq("user_id", value: user.id)
+                .execute()
+                .value
+            
+            var bots: [Bot] = []
+            for saved_bot in saved_bots {
+                let bot: [Bot] = try await self.client
+                  .from("bots")
+                  .select("id, bot_public_id, name, description, icon")
+                  .eq("id", value: saved_bot.bot_id)
+                  .execute()
+                  .value
+                bots.append(bot.first!)
+            }
+            return bots
+        } catch {
+            print(error)
+            return nil
+        }
+    }
+    
     func getBots() async -> [Bot]? {
         do {
             let bots: [Bot] = try await self.client
               .from("bots")
-              .select("id, bot_public_id, name, description, icon")
+              .select("""
+                    id, 
+                    bot_public_id, 
+                    name, 
+                    description, 
+                    icon
+                    """)
               .execute()
               .value
+            print(bots)
             return bots
         } catch {
             print(error)
@@ -123,11 +184,16 @@ class SupabaseService {
     }
 }
 
+struct SavedBot : Decodable {
+    let user_id: UUID
+    let bot_id: UUID
+}
+
 struct Bot : Decodable, Identifiable, Hashable {
     let id: UUID
     let bot_public_id: String
     let name: String
-    let description: String
+    let description: String?
     let icon: String
 }
 

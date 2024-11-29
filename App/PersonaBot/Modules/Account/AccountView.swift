@@ -129,8 +129,8 @@ struct AccountView: View {
         isCheckingAuth = true
         Task {
             self.isAuthenticated = await SupabaseService.shared.isAuthenticated()
+            isCheckingAuth = false
         }
-        isCheckingAuth = false
     }
     
     private func setUsername(){

@@ -22,7 +22,7 @@ class ExploreViewModel: ObservableObject {
     func toggleSave(for bot: Bot) {
         if isAuthenticated {
             if let index = bots.firstIndex(where: { $0.id == bot.id }) {
-                // bots[index].isSaved.toggle()
+               //  bots[index].is_saved.toggle()
             }
         }
     }
@@ -32,12 +32,12 @@ class ExploreViewModel: ObservableObject {
             return bots
         }
         return bots.filter { $0.name.localizedCaseInsensitiveContains(searchText) ||
-                             $0.description.localizedCaseInsensitiveContains(searchText) }
+            (($0.description?.localizedCaseInsensitiveContains(searchText)) != nil) }
     }
     
     func setBots() {
         Task {
-            let botsRequest = await SupabaseService.shared.getBots()
+            let botsRequest = await SupabaseService.shared.getUserUnsavedBots()
             if let fetchedBots = botsRequest {
                 await MainActor.run {
                     self.bots = fetchedBots
