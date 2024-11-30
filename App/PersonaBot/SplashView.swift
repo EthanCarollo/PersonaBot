@@ -122,6 +122,5 @@ struct SplashScreen: View {
             })
         }
         .navigationViewStyle(StackNavigationViewStyle())
-        
     }
 }

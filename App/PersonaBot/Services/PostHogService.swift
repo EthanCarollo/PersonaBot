@@ -14,4 +14,8 @@ public class PostHogService {
         let config = PostHogConfig(apiKey: Config.POSTHOG_API_KEY, host: Config.POSTHOG_HOST)
         PostHogSDK.shared.setup(config)
     }
+    
+    public func CaptureEvent(event: String){
+        PostHogSDK.shared.capture(event)
+    }
 }

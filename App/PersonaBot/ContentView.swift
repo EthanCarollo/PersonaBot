@@ -7,6 +7,7 @@
 
 import SwiftUI
 import Combine
+import PostHog
 
 struct ContentView: View {
     @StateObject private var authViewModel = AuthViewModel()
@@ -38,6 +39,9 @@ struct ContentView: View {
         .edgesIgnoringSafeArea(.bottom)
         .navigationBarHidden(true)
         .navigationBarBackButtonHidden(true)
+        .onAppear(perform: {
+            PostHogService.shared.Setup()
+        })
     }
     
     private func safeAreaBottomPadding() -> CGFloat {

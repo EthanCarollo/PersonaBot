@@ -11,6 +11,7 @@
 		195F98E62CF89B5D0072F73E /* Functions in Frameworks */ = {isa = PBXBuildFile; productRef = 195F98E52CF89B5D0072F73E /* Functions */; };
 		195F98E82CF89B5D0072F73E /* Supabase in Frameworks */ = {isa = PBXBuildFile; productRef = 195F98E72CF89B5D0072F73E /* Supabase */; };
 		195F98F12CF8A20E0072F73E /* SwiftKeychainWrapper in Frameworks */ = {isa = PBXBuildFile; productRef = 195F98F02CF8A20E0072F73E /* SwiftKeychainWrapper */; };
+		19EB51DA2CFBC21100F64205 /* PostHog in Frameworks */ = {isa = PBXBuildFile; productRef = 19EB51D92CFBC21100F64205 /* PostHog */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -74,6 +75,7 @@
 			files = (
 				195F98E62CF89B5D0072F73E /* Functions in Frameworks */,
 				195F98E42CF89B5D0072F73E /* Auth in Frameworks */,
+				19EB51DA2CFBC21100F64205 /* PostHog in Frameworks */,
 				195F98F12CF8A20E0072F73E /* SwiftKeychainWrapper in Frameworks */,
 				195F98E82CF89B5D0072F73E /* Supabase in Frameworks */,
 			);
@@ -140,6 +142,7 @@
 				195F98E52CF89B5D0072F73E /* Functions */,
 				195F98E72CF89B5D0072F73E /* Supabase */,
 				195F98F02CF8A20E0072F73E /* SwiftKeychainWrapper */,
+				19EB51D92CFBC21100F64205 /* PostHog */,
 			);
 			productName = PersonaBot;
 			productReference = 195F98B22CF882FE0072F73E /* PersonaBot.app */;
@@ -226,6 +229,7 @@
 			packageReferences = (
 				195F98E22CF89B5D0072F73E /* XCRemoteSwiftPackageReference "supabase-swift" */,
 				195F98EF2CF8A20E0072F73E /* XCRemoteSwiftPackageReference "SwiftKeychainWrapper" */,
+				19EB51D82CFBC1D100F64205 /* XCRemoteSwiftPackageReference "posthog-ios" */,
 			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = 195F98B32CF882FE0072F73E /* Products */;
@@ -614,6 +618,14 @@
 				minimumVersion = 4.0.1;
 			};
 		};
+		19EB51D82CFBC1D100F64205 /* XCRemoteSwiftPackageReference "posthog-ios" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/PostHog/posthog-ios.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 3.15.9;
+			};
+		};
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
@@ -636,6 +648,11 @@
 			isa = XCSwiftPackageProductDependency;
 			package = 195F98EF2CF8A20E0072F73E /* XCRemoteSwiftPackageReference "SwiftKeychainWrapper" */;
 			productName = SwiftKeychainWrapper;
+		};
+		19EB51D92CFBC21100F64205 /* PostHog */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 19EB51D82CFBC1D100F64205 /* XCRemoteSwiftPackageReference "posthog-ios" */;
+			productName = PostHog;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};
