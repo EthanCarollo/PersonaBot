@@ -45,6 +45,7 @@ struct SplashScreen: View {
                                     .fill(Color.green.opacity(0.2))
                             )
                             .transition(.opacity.combined(with: .move(edge: .top)))
+                            .padding(.top, 20)
                     }
                     
                     Spacer()

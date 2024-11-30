@@ -39,6 +39,7 @@ class CreateBotViewModel: ObservableObject {
             // Return true to indicate successful creation
             return true
         } catch {
+            print(error)
             return false
         }
         
