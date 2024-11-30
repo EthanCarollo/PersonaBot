@@ -162,7 +162,7 @@ class SupabaseService {
             let user = try await self.client.auth.user()
             let profile: [Profile] = try await self.client
               .from("profiles")
-              .select("id, username")
+              .select("id, username, role")
               .eq("id", value: user.id)
               .execute()
               .value
@@ -218,6 +218,7 @@ struct Bot : Decodable, Identifiable, Hashable {
 struct Profile: Decodable {
     let id: UUID
     let username: String
+    let role: String
 }
 
 enum AuthError: Error {

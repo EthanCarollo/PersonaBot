@@ -34,6 +34,7 @@ struct AccountView: View {
     @State private var isUpdatingUsername = false
     @State private var showUsernameUpdateAlert = false
     @State private var usernameUpdateMessage = ""
+    @State private var userRole: String = "free"
     
     @State private var showMyBotsSheet = false
     @State private var showCreateBotSheet = false
@@ -55,10 +56,21 @@ struct AccountView: View {
                             .font(.system(size: 80))
                             .foregroundColor(Color.neonGreen)
                         
-                        Text("Mon Compte")
-                            .font(.title)
-                            .fontWeight(.bold)
-                            .foregroundColor(.white)
+                        HStack {
+                            Text("Mon Compte")
+                                .font(.title)
+                                .fontWeight(.bold)
+                                .foregroundColor(.white)
+                            
+                            Text(userRole.capitalizingFirstLetter())
+                                .font(.caption)
+                                .fontWeight(.bold)
+                                .foregroundColor(.yellow)
+                                .padding(.horizontal, 8)
+                                .padding(.vertical, 4)
+                                .background(Color.yellow.opacity(0.2))
+                                .cornerRadius(10)
+                        }
                         
                         TextField("Nom d'utilisateur", text: $username)
                             .foregroundColor(.white)
@@ -69,17 +81,19 @@ struct AccountView: View {
                             .onSubmit {
                                 updateUsername()
                             }
+                        
                     }
                     .padding(.top, 50)
                     
                     VStack(spacing: 15) {
-                        AccountOptionButton(icon: "bubble.left.and.bubble.right", text: "Mes Bots") {
+                        AccountOptionButton(icon: "bubble.left.and.bubble.right", text: "Mes Bots", isPro: false, isEnabled: true) {
                             showMyBotsSheet = true
                         }
-                        AccountOptionButton(icon: "person.badge.plus", text: "Créer un Bot") {
+                        AccountOptionButton(icon: "person.badge.plus", text: "Créer un Bot", isPro: true, isEnabled: userRole == "pro") {
+                            PostHogService.shared.CaptureEvent(event: "OpenCreateBotView")
                             showCreateBotSheet = true
                         }
-                        AccountOptionButton(icon: "gear", text: "Paramètres") {
+                        AccountOptionButton(icon: "gear", text: "Paramètres", isPro: false, isEnabled: true) {
                             showSettingsSheet = true
                         }
                     }
@@ -139,7 +153,7 @@ struct AccountView: View {
         }
         .navigationBarHidden(true)
         .onAppear {
-            setUsername()
+            setUserInformation()
         }
         .alert(isPresented: $showUsernameUpdateAlert) {
             Alert(title: Text("Mise à jour du nom d'utilisateur"),
@@ -148,12 +162,13 @@ struct AccountView: View {
         }
     }
     
-    private func setUsername() {
+    private func setUserInformation() {
         Task {
             let profile = await SupabaseService.shared.getProfile()
             if let userProfile = profile {
                 DispatchQueue.main.async {
                     self.username = userProfile.username
+                    self.userRole = userProfile.role
                 }
             }
         }
@@ -184,6 +199,8 @@ struct AccountView: View {
 struct AccountOptionButton: View {
     let icon: String
     let text: String
+    let isPro: Bool
+    let isEnabled: Bool
     let action: () -> Void
     
     var body: some View {
@@ -198,6 +215,17 @@ struct AccountOptionButton: View {
                 
                 Spacer()
                 
+                if isPro {
+                    Text("Pro")
+                        .font(.caption)
+                        .fontWeight(.bold)
+                        .foregroundColor(.yellow)
+                        .padding(.horizontal, 8)
+                        .padding(.vertical, 4)
+                        .background(Color.yellow.opacity(0.2))
+                        .cornerRadius(10)
+                }
+                
                 Image(systemName: "chevron.right")
                     .foregroundColor(.gray)
             }
@@ -205,7 +233,8 @@ struct AccountOptionButton: View {
             .background(Color.white.opacity(0.1))
             .cornerRadius(15)
             .padding(.horizontal)
+            .opacity(isEnabled ? 1.0 : 0.5)
         }
+        .disabled(!isEnabled)
     }
 }
-
