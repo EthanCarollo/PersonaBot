@@ -55,9 +55,11 @@ class SupabaseClient:
                 "created_by": user_id,
                 "bot_public_id": bot_public_id,
                 "description": description,
-                "name": bot_name
+                "name": bot_name,
+                "icon": "terminal"
             }).execute()
-        except :
+        except Exception as error :
+            logger.error(error)
             return None
     
     @staticmethod
