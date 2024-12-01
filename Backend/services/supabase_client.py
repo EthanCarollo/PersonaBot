@@ -40,6 +40,13 @@ class SupabaseClient:
         except :
             return None
 
+    def get_number_of_bot(self, user_id):
+        try :
+            return len(self.client.table('saved_bots').select('*').eq('user_id', user_id).execute().data)
+        except Exception as e :
+            logger.error(e)
+            return None
+
     def add_bot_to_saved(self, bot_id, user_id):
         try :
             return self.client.table('saved_bots').upsert({"bot_id": bot_id, "user_id": user_id}).execute()

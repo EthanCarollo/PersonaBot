@@ -21,11 +21,26 @@ def add_bot():
         return jsonify({"error": "Missing 'bot_id'"}), 400
 
     token = data.get('token')
+    if not token:
+        return jsonify({"error": "Missing 'token'"}), 400
     supabase_profile = supabase_client.get_profile_from_jwt(token)
 
     if not supabase_profile:
         return jsonify({"error": "Not a good token !"}), 400
 
-    supabase_client.add_bot_to_saved(bot_id, supabase_profile.data["id"])
+    number_of_bot = supabase_client.get_number_of_bot(supabase_profile.data["id"])
+    if can_add_bot(supabase_profile.data["role"], number_of_bot):
+        supabase_client.add_bot_to_saved(bot_id, supabase_profile.data["id"])
+        return jsonify({"success": "Success !"})
+    else :
+        return jsonify({"error": "Can't add bot"})
 
-    return jsonify({"success": "Success !"})
+def can_add_bot(role: str, number_of_bot: int) -> bool:
+    if role == "pro":
+        return True
+    if role == "free":
+        # If the user is free, he can't add more than 2 bots
+        if number_of_bot >= 2:
+            return False
+        return True
+    return True

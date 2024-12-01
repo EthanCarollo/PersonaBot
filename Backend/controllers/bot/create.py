@@ -39,6 +39,10 @@ def add_bot():
     if not supabase_profile:
         return jsonify({"error": "Not a good token !"}), 400
 
+    if supabase_profile.data["role"] != "pro":
+        return jsonify({"error": "Can't create bot cause he isn't pro !"}), 400
+        
+
     logger.info("Will create bot with name : '" + bot_name + "' and id : '" + bot_public_id + "'")
     supabase_client.create_bot(supabase_profile.data["id"], bot_public_id, bot_name, bot_description)
     chatqueryService : ChatQueryService = ChatQueryService(bot_public_id)
