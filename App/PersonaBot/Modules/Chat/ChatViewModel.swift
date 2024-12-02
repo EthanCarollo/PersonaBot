@@ -12,6 +12,7 @@ class ChatViewModel: ObservableObject {
     @Published var messages: [ChatMessage] = []
     @Published var isLoading = false
     @Published var selectedBot: Bot?
+    @Published var isSelectingBot = true
     var scrollProxy: ScrollViewProxy?
     
     private var cancellables = Set<AnyCancellable>()
@@ -26,6 +27,12 @@ class ChatViewModel: ObservableObject {
             .sink { [weak self] _ in
                 self?.objectWillChange.send()
             }.store(in: &cancellables)
+    }
+    
+    func selectBot(_ bot: Bot) {
+        selectedBot = bot
+        isSelectingBot = false
+        messages = []
     }
     
     func sendMessage() {

@@ -5,7 +5,6 @@
 //  Created by eth on 28/11/2024.
 //
 import SwiftUI
-import Combine
 
 struct ChatView: View {
     @StateObject private var viewModel = ChatViewModel()
@@ -15,10 +14,11 @@ struct ChatView: View {
     var body: some View {
         GeometryReader { geometry in
             VStack(spacing: 0) {
-                botSelectionView
-                chatMessagesView.padding(.top, 16)
-                messageInputView(geometry: geometry)
-                Spacer(minLength: keyboardHeight > 0 ? keyboardHeight - 4 : 78)
+                if viewModel.isSelectingBot {
+                    botSelectionView
+                } else {
+                    chatView(geometry: geometry)
+                }
             }
             .background(Color.black.edgesIgnoringSafeArea(.all))
             .onChange(of: isFocused) { focused in
@@ -36,42 +36,84 @@ struct ChatView: View {
     }
     
     private var botSelectionView: some View {
-        ScrollView(.horizontal, showsIndicators: false) {
-            HStack(spacing: 12) {
-                ForEach(BotsViewModel.shared.savedBots) { bot in
+        ScrollView {
+            LazyVStack(spacing: 16) {
+                Text("Select an AI to chat with")
+                    .font(.title)
+                    .foregroundColor(.white)
+                    .padding(.top, 32)
+                
+                ForEach(BotsViewModel.shared.unsavedBots) { bot in
                     Button(action: {
-                        viewModel.selectedBot = bot
+                        viewModel.selectBot(bot)
                     }) {
-                        VStack(spacing: 8) {
-                            ZStack {
-                                Circle()
-                                    .fill(viewModel.selectedBot?.id == bot.id ? Color.green.opacity(0.3) : Color.black)
-                                    .frame(width: 60, height: 60)
-                                
-                                Image(systemName: bot.icon)
-                                    .resizable()
-                                    .foregroundColor(.white)
-                                    .aspectRatio(contentMode: .fit)
-                                    .frame(width: 30, height: 30)
-                            }
-                            .overlay(
-                                Circle()
-                                    .stroke(viewModel.selectedBot?.id == bot.id ? Color.green : Color.gray, lineWidth: 2)
-                            )
+                        HStack(spacing: 16) {
+                            Image(systemName: bot.icon)
+                                .resizable()
+                                .aspectRatio(contentMode: .fit)
+                                .frame(width: 40, height: 40)
+                                .foregroundColor(.white)
                             
                             Text(bot.name)
-                                .font(.caption)
-                                .foregroundColor(viewModel.selectedBot?.id == bot.id ? .green : .white)
+                                .font(.headline)
+                                .foregroundColor(.white)
+                            
+                            Spacer()
+                            
+                            Image(systemName: "chevron.right")
+                                .foregroundColor(Color.green)
                         }
+                        .padding()
+                        .background(Color.gray.opacity(0.2))
+                        .overlay(
+                            RoundedRectangle(cornerRadius: 10)
+                                .stroke(Color.green.opacity(0.3), lineWidth: 1)
+                        )
+                        .cornerRadius(10)
                     }
-                    .frame(width: 80)
                 }
             }
-            .padding(.horizontal)
-            .padding(.top, 16) // Ajout de padding en haut
+            .padding()
         }
-        .frame(height: 120) // Augmentation de la hauteur pour accommoder le padding supplémentaire
-        .background(Color.black.edgesIgnoringSafeArea(.horizontal))
+    }
+    
+    private func chatView(geometry: GeometryProxy) -> some View {
+        VStack(spacing: 0) {
+            chatHeader
+            chatMessagesView.padding(.top, 8)
+            messageInputView(geometry: geometry)
+            Spacer(minLength: keyboardHeight > 0 ? keyboardHeight - 4 : 78)
+        }
+    }
+    
+    private var chatHeader: some View {
+        ZStack {
+            HStack {
+                Button(action: {
+                    viewModel.isSelectingBot = true
+                    viewModel.selectedBot = nil
+                    viewModel.messages = []
+                }) {
+                    HStack {
+                        Image(systemName: "chevron.left")
+                            .foregroundColor(.green)
+                        Text("Back")
+                            .foregroundColor(.green)
+                    }
+                }
+                Spacer()
+            }
+            .padding(.horizontal)
+            
+            if let selectedBot = viewModel.selectedBot {
+                Text(selectedBot.name)
+                    .font(.headline)
+                    .foregroundColor(.white)
+            }
+        }
+        .padding(.top, 26)
+        .frame(height: 44)
+        .background(Color.black.opacity(0.8))
     }
     
     private var chatMessagesView: some View {
@@ -79,7 +121,7 @@ struct ChatView: View {
             ScrollView {
                 LazyVStack(spacing: 0) {
                     ForEach(viewModel.messages) { message in
-                        ChatBubble(message: message)
+                        chatBubble(for: message)
                             .id(message.id)
                             .padding(.bottom, 20)
                     }
@@ -92,6 +134,22 @@ struct ChatView: View {
             }
             .onAppear {
                 viewModel.scrollProxy = proxy
+            }
+        }
+    }
+    
+    private func chatBubble(for message: ChatMessage) -> some View {
+        HStack {
+            if message.isUser {
+                Spacer()
+            }
+            Text(message.content)
+                .padding(12)
+                .background(message.isUser ? Color.green.opacity(0.8) : Color.gray)
+                .foregroundColor(.white)
+                .cornerRadius(16)
+            if !message.isUser {
+                Spacer()
             }
         }
     }
@@ -124,11 +182,11 @@ struct ChatView: View {
             VStack(spacing: 4) {
                 Image(systemName: "arrow.up.circle.fill")
                     .font(.system(size: 24))
-                    .foregroundColor(viewModel.isLoading || viewModel.messageText.isEmpty ? .gray : .neonGreen)
+                    .foregroundColor(viewModel.isLoading || viewModel.messageText.isEmpty ? .gray : .green)
                 
                 Text("Envoyer")
                     .font(.caption)
-                    .foregroundColor(viewModel.isLoading || viewModel.messageText.isEmpty ? .gray : .neonGreen)
+                    .foregroundColor(viewModel.isLoading || viewModel.messageText.isEmpty ? .gray : .green)
             }
         }
         .disabled(viewModel.isLoading || viewModel.messageText.isEmpty)
@@ -161,6 +219,8 @@ struct ChatView: View {
         NotificationCenter.default.removeObserver(self, name: UIResponder.keyboardWillHideNotification, object: nil)
     }
 }
+
+
 
 struct BackendResponse: Codable {
     let response: String
