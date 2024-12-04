@@ -33,6 +33,15 @@ class ChatViewModel: ObservableObject {
         selectedBot = bot
         isSelectingBot = false
         messages = []
+        Task {
+            let chatMessages = await SupabaseService.shared.getBotDiscussion(botPublicId: bot.bot_public_id)
+            guard let _messages: [ChatMessage] = chatMessages else {
+                return
+            }
+            await MainActor.run {
+                messages = _messages
+            }
+        }
     }
     
     func sendMessage() {

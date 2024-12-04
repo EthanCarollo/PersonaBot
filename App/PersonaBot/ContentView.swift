@@ -41,6 +41,9 @@ struct ContentView: View {
         .navigationBarBackButtonHidden(true)
         .onAppear(perform: {
             PostHogService.shared.Setup()
+            Task {
+                await SupabaseService.shared.getBotDiscussion(botPublicId: "cook_bot")
+            }
         })
     }
     

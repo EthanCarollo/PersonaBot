@@ -54,6 +54,25 @@ class SupabaseClient:
             logger.error(e)
             return None
 
+    def new_message_with_bot(self, bot_id, user_id, text_message, sender):
+        try :
+            messages = None
+            try : 
+                bot_discussion = self.client.table('bot_discussions').select('*').eq('bot_id', bot_id).eq('user_id', user_id).single().execute()
+                messages = bot_discussion.data["discussion"]
+            except Exception as e :
+                logger.warning(f"Error on getting bot_discussions, creating new one, {e}")
+                messages = []
+            
+            messages.append({
+                "text": text_message,
+                "sender": sender
+            })
+            self.client.table('bot_discussions').upsert({'bot_id': bot_id, 'user_id': user_id, "discussion": messages}).execute()
+        except Exception as e :
+            logger.error(e)
+            return None
+
     def create_bot(self, user_id: str, bot_public_id: str, bot_name: str, description: str):
         # When I create a bot, I don't directly insert all Data in QDrant, I do it after cause the logics to talk with
         # ChatQueryService shouldn't be in the SupabaseClient

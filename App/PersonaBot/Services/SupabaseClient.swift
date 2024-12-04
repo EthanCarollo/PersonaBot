@@ -149,8 +149,30 @@ class SupabaseService {
                     """)
               .execute()
               .value
-            print(bots)
             return bots
+        } catch {
+            print(error)
+            return nil
+        }
+    }
+    
+    func getBotDiscussion(botPublicId: String) async -> [ChatMessage]? {
+        do {
+            let user = try await self.client.auth.user()
+            let botDiscussion: BotDiscussion = try await self.client
+                .from("bot_discussions")
+                .select("discussion")
+                .eq("user_id", value: user.id)
+                .eq("bot_id", value: botPublicId)
+                .single()
+                .execute()
+                .value
+            var messages: [ChatMessage] = []
+            for message in botDiscussion.discussion {
+                messages.append(ChatMessage(id: UUID(), content: message.text, isUser: message.sender=="user"))
+            }
+            print(messages)
+            return messages
         } catch {
             print(error)
             return nil
@@ -205,6 +227,15 @@ class SupabaseService {
 struct SavedBot : Decodable {
     let user_id: UUID
     let bot_id: UUID
+}
+
+struct BotDiscussion : Decodable {
+    let discussion: [DiscussionMessage]
+}
+
+struct DiscussionMessage : Decodable {
+    let text: String
+    let sender: String
 }
 
 struct Bot : Decodable, Identifiable, Hashable {

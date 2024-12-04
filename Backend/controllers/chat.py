@@ -48,14 +48,18 @@ def chat_with_bot():
     logger.warning(f"Receive in chat_with_bot : {bot}")
 
     token = data.get('token')
-    print(token)
+
     if not token :
         return jsonify({"error": "Missing 'token'."}), 400
-    supabase_client.get_profile_from_jwt(token)
+
+    profile = supabase_client.get_profile_from_jwt(token)
+
+    supabase_client.new_message_with_bot(bot_information.data["bot_public_id"], profile.data["id"], text, "user")
 
     chatQueryService : ChatQueryService = ChatQueryService(bot_information.data["bot_public_id"])
-
     result = chatQueryService.chat(text)
+
+    supabase_client.new_message_with_bot(bot_information.data["bot_public_id"], profile.data["id"], result.response, "bot")
 
     # This route can be called even if the user isn't connected so we retire the token part
     # token = data.get('token')
