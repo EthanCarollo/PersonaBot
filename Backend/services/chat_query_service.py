@@ -5,18 +5,21 @@ from qdrant_client import QdrantClient
 from qdrant_client.http import models
 from llama_index.core.schema import TextNode
 import logging
+from llama_index.core import ChatPromptTemplate
+from llama_index.core.llms import ChatMessage, MessageRole
 
 logger = logging.getLogger("persona_bot")
 
 class ChatQueryService:
-    def __init__(self, collection_name: str):
+    def __init__(self, collection_name: str, instruction: str = None):
         self.client = QdrantClient(host=QDRANT_HOST, port=QDRANT_PORT, timeout= 20)
         self.collection_name = collection_name
         self.chat_engine = None
         self.vector_store = None
-        self._initialize_collection()
+        self.instruction = instruction
+        self._initialize()
 
-    def _initialize_collection(self):
+    def _initialize(self):
         if not self.client.collection_exists(self.collection_name):
             logger.info(f"Creating collection '{self.collection_name}'")
             self.client.create_collection(
@@ -45,6 +48,17 @@ class ChatQueryService:
         """Perform a simple query and return the results."""
         if not self.chat_engine:
             raise ValueError("Chat engine is not initialized.")
+        if self.instruction != None : 
+            message_templates = [
+                ChatMessage(content=self.instruction, role=MessageRole.SYSTEM),
+                ChatMessage(
+                    content="{question}",
+                    role=MessageRole.USER,
+                ),
+            ]
+            chat_template = ChatPromptTemplate(message_templates=message_templates)
+            prompt = chat_template.format(question=chat_str)
+            return self.chat_engine.chat(prompt)
         return self.chat_engine.chat(chat_str)
 
     @staticmethod
