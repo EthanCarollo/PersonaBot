@@ -43,7 +43,7 @@ struct ChatView: View {
                     .foregroundColor(.white)
                     .padding(.top, 32)
                 
-                ForEach(BotsViewModel.shared.unsavedBots) { bot in
+                ForEach(BotsViewModel.shared.savedBots) { bot in
                     Button(action: {
                         viewModel.selectBot(bot)
                     }) {

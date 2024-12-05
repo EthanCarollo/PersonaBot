@@ -21,6 +21,7 @@ class CreateBotViewModel: ObservableObject {
     }
     
     func submitCreation() async -> Bool {
+        PostHogService.shared.CaptureEvent(event: "CreationBotSubmit")
         guard isFormValid() else { return false }
         
         let newBot = BotCreable(
@@ -33,12 +34,14 @@ class CreateBotViewModel: ObservableObject {
         
         do {
             try await BackendService.shared.createBot(bot: newBot)
+            PostHogService.shared.CaptureEvent(event: "CreationBotSuccessful")
             // Here you would typically send the newBot to your data store or API
             print("New bot created: \(newBot)")
             
             // Return true to indicate successful creation
             return true
         } catch {
+            PostHogService.shared.CaptureEvent(event: "CreationBotError")
             print(error)
             return false
         }

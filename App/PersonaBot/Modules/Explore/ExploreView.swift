@@ -45,6 +45,7 @@ class ExploreViewModel: ObservableObject {
     }
     
     func saveBot(bot: Bot) {
+        PostHogService.shared.CaptureEvent(event: "SaveBot")
         print("save bot : \(bot)")
         Task {
             try await BackendService.shared.saveBot(botId: bot.id)

@@ -171,7 +171,6 @@ class SupabaseService {
             for message in botDiscussion.discussion {
                 messages.append(ChatMessage(id: UUID(), content: message.text, isUser: message.sender=="user"))
             }
-            print(messages)
             return messages
         } catch {
             print(error)

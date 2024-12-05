@@ -35,6 +35,7 @@ struct MyBotsView: View {
                                 .scaleEffect(2)
                                 .frame(maxWidth: .infinity, maxHeight: .infinity)
                         } else if viewModel.savedBots.filter({ $0.bot_public_id != "classic" }).isEmpty {
+                            
                             VStack(spacing: 20) {
                                 Image(systemName: "robot")
                                     .font(.system(size: 60))

@@ -20,6 +20,20 @@ class MyBotsViewModel: ObservableObject {
         }
     }
     
+    private var cancellables = Set<AnyCancellable>()
+    
+    deinit {
+        cancellables.forEach { $0.cancel() }
+    }
+    
+    init() {
+        BotsViewModel.shared.$unsavedBots
+            .receive(on: DispatchQueue.main)
+            .sink { [weak self] _ in
+                self?.objectWillChange.send()
+            }.store(in: &cancellables)
+    }
+    
     func fetchBots(showLoad: Bool = true) async {
         await MainActor.run {
             if(showLoad) {
