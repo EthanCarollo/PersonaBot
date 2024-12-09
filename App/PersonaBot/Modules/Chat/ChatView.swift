@@ -111,7 +111,8 @@ struct ChatView: View {
                     .foregroundColor(.white)
             }
         }
-        .padding(.top, 26)
+        .padding(.top, 32)
+        .padding(.bottom, 16)
         .frame(height: 44)
         .background(Color.black.opacity(0.8))
     }

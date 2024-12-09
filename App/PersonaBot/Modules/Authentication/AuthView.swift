@@ -223,7 +223,8 @@ struct AuthView: View {
             defer { isLoading = false }
             
             do {
-                try await SupabaseService.shared.client.auth.signUp(email: email, password: password)
+                try await SupabaseService.shared.client.auth.signUp(email: email, password: password,
+                                                                    data: ["username": .string(name)])
                 result = .success(())
             } catch {
                 result = .failure(error)
