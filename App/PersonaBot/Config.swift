@@ -8,9 +8,13 @@
 import Foundation
 
 struct Config {
-    static let backendURL = "http://192.168.1.127:5001"
-
+    static let backendURL = "http://192.168.2.115:5001"
     static let POSTHOG_API_KEY = "phc_tfRHQFzFKLKzYrDCEkqKfJ8RzbwclHkkVR3404Fk8xA"
     static let POSTHOG_HOST = "https://eu.i.posthog.com"
+    static var appVersion: String {
+            let version = Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String ?? "Unknown"
+            let build = Bundle.main.infoDictionary?["CFBundleVersion"] as? String ?? "Unknown"
+            return "\(version)"
+        }
 }
 

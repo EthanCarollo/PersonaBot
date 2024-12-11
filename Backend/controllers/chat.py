@@ -60,9 +60,6 @@ def chat_with_bot():
     result = chatQueryService.chat(text)
 
     supabase_client.new_message_with_bot(bot_information.data["bot_public_id"], profile.data["id"], result.response, "bot")
-
-    # This route can be called even if the user isn't connected so we retire the token part
-    # token = data.get('token')
     
     # Result is of type AgentChatResponse 
     # https://docs.llamaindex.ai/en/stable/api_reference/chat_engines/

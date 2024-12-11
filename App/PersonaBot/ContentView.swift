@@ -8,6 +8,18 @@
 import SwiftUI
 import Combine
 import PostHog
+import UserNotifications
+
+func requestNotificationPermissions() {
+    UNUserNotificationCenter.current().requestAuthorization(options: [.alert, .badge, .sound]) { granted, error in
+        if granted {
+            print("Notification permissions granted.")
+        } else if let error = error {
+            print("Error requesting notifications permissions: \(error.localizedDescription)")
+        }
+    }
+}
+
 
 struct ContentView: View {
     @StateObject private var authViewModel = AuthViewModel()
@@ -41,6 +53,7 @@ struct ContentView: View {
         .navigationBarBackButtonHidden(true)
         .onAppear(perform: {
             PostHogService.shared.Setup()
+            requestNotificationPermissions()
             Task {
                 await SupabaseService.shared.getBotDiscussion(botPublicId: "cook_bot")
             }

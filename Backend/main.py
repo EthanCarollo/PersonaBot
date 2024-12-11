@@ -17,6 +17,8 @@ def create_app():
     from controllers.bot.create import create_bot_data_bp
     from controllers.bot.save_bot import add_bot_bp
     from controllers.revenuecat import revenue_cat_bp
+    from controllers.health import health_bp
+    from controllers.version import version_bp
     
     # Trust CORS from everywhere
     app = Flask(__name__)
@@ -27,6 +29,8 @@ def create_app():
     app.register_blueprint(create_bot_data_bp)
     app.register_blueprint(add_bot_bp)
     app.register_blueprint(revenue_cat_bp)
+    app.register_blueprint(health_bp)
+    app.register_blueprint(version_bp)
     return app
 
 supabase_client : SupabaseClient = SupabaseClient.get_instance()
