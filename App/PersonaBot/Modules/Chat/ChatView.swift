@@ -44,32 +44,8 @@ struct ChatView: View {
                     .padding(.top, 32)
                 
                 ForEach(BotsViewModel.shared.savedBots) { bot in
-                    Button(action: {
-                        viewModel.selectBot(bot)
-                    }) {
-                        HStack(spacing: 16) {
-                            Image(systemName: bot.icon)
-                                .resizable()
-                                .aspectRatio(contentMode: .fit)
-                                .frame(width: 40, height: 40)
-                                .foregroundColor(.white)
-                            
-                            Text(bot.name)
-                                .font(.headline)
-                                .foregroundColor(.white)
-                            
-                            Spacer()
-                            
-                            Image(systemName: "chevron.right")
-                                .foregroundColor(Color.green)
-                        }
-                        .padding()
-                        .background(Color.gray.opacity(0.2))
-                        .overlay(
-                            RoundedRectangle(cornerRadius: 10)
-                                .stroke(Color.green.opacity(0.3), lineWidth: 1)
-                        )
-                        .cornerRadius(10)
+                    Button(action: {viewModel.selectBot(bot)}){
+                        BotCard(bot: bot, iconAction: "chevron.right", isAuthenticated: true, onAction: {})
                     }
                 }
             }

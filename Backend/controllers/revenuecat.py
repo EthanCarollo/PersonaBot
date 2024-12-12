@@ -3,7 +3,6 @@ import time
 from flask import Blueprint, request, jsonify
 from services.supabase_client import SupabaseClient
 from utils.send_gpt import send_gpt
-from services.chat_query_service import ChatQueryService
 import logging
 import os
 

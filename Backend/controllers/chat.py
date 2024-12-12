@@ -56,7 +56,7 @@ def chat_with_bot():
 
     supabase_client.new_message_with_bot(bot_information.data["bot_public_id"], profile.data["id"], text, "user")
 
-    chatQueryService : ChatQueryService = ChatQueryService(bot_information.data["bot_public_id"], bot_information.data["instruction"])
+    chatQueryService : ChatQueryService = ChatQueryService(bot_information.data["bot_public_id"], profile.data["id"], bot_information.data["instruction"])
     result = chatQueryService.chat(text)
 
     supabase_client.new_message_with_bot(bot_information.data["bot_public_id"], profile.data["id"], result.response, "bot")

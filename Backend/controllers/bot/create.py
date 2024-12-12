@@ -45,7 +45,7 @@ def add_bot():
 
     logger.info("Will create bot with name : '" + bot_name + "' and id : '" + bot_public_id + "'")
     supabase_client.create_bot(supabase_profile.data["id"], bot_public_id, bot_name, bot_description)
-    chatqueryService : ChatQueryService = ChatQueryService(bot_public_id)
+    chatqueryService : ChatQueryService = ChatQueryService(bot_public_id, supabase_profile.data["id"])
     for knowledge in bot_knowledge:
         chatqueryService.upsert_node(knowledge)
 

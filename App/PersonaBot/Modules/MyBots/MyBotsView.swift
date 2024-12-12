@@ -51,7 +51,6 @@ struct MyBotsView: View {
                                     .font(.body)
                                     .foregroundColor(.gray)
                                     .multilineTextAlignment(.center)
-
                             }
                             .padding(.bottom, 50)
                             .frame(width: geometry.size.width)
