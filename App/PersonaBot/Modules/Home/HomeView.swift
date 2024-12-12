@@ -56,19 +56,16 @@ struct HomeView: View {
                         .shadow(color: Color.neonGreen.opacity(0.5), radius: 20)
                 }
                 
-                // Welcome text
-                VStack(spacing: 16) {
-                    Text("Ton assistant IA,")
-                        .font(.system(size: 28, weight: .bold))
-                        .foregroundColor(.white)
-                    Text("au quotidien.")
-                        .font(.system(size: 28, weight: .bold))
-                        .foregroundColor(.white)
+                VStack(spacing: 8) {
+                    Text("Create Your Own AI Assistant,")
+                        .font(.system(size: 22, weight: .bold))
+                    Text("tailored just for you.")
+                        .font(.system(size: 16, weight: .bold))
+                        .padding(.top, -4)
                 }
                 
                 Spacer()
                 
-                // Bento grid
                 VStack {
                     // Chatter button (wider)
                     
@@ -80,7 +77,7 @@ struct HomeView: View {
                                 Image(systemName: "message")
                                     .font(.system(size: 24))
                                     .foregroundColor(Color.neonGreen)
-                                Text("Chatter")
+                                Text("Chat")
                                     .font(.system(size: 14, weight: .medium))
                                     .foregroundColor(Color.white)
                             }
@@ -89,7 +86,7 @@ struct HomeView: View {
                             .cornerRadius(16)
                         }
                         BentoButton(
-                            title: "Explorer",
+                            title: "Explore",
                             icon: "magnifyingglass",
                             action: { selectedTab = 1 },
                             width: UIScreen.main.bounds.width * 0.3,
@@ -98,14 +95,14 @@ struct HomeView: View {
                     }
                     HStack {
                         BentoButton(
-                            title: "Créer",
+                            title: "Create",
                             icon: "plus.circle",
                             action: { selectedTab = 3 },
                             width: UIScreen.main.bounds.width * 0.3,
                             height: 80
                         )
                         BentoButton(
-                            title: "Mes Bots",
+                            title: "My Bots",
                             icon: "person.2",
                             action: { selectedTab = 3 },
                             width: UIScreen.main.bounds.width * 0.6,

@@ -10,6 +10,8 @@ import Supabase
 import SwiftKeychainWrapper
 
 struct AuthView: View {
+    @EnvironmentObject var authViewModel: AuthViewModel
+    
     @Environment(\.dismiss) private var dismiss
     @State private var name = ""
     @State private var email = ""
@@ -18,7 +20,6 @@ struct AuthView: View {
     @State private var result: Result<Void, Error>?
     @State private var showPassword = false
     @State private var isLoginMode = false
-    @EnvironmentObject var authViewModel: AuthViewModel
     @State private var keyboardHeight: CGFloat = 0
     
     var body: some View {
@@ -56,15 +57,15 @@ struct AuthView: View {
                         .shadow(color: Color.green.opacity(0.5), radius: 20)
                     
                     // Title
-                    Text(isLoginMode ? "Connecte-toi" : "Inscris-toi")
+                    Text(isLoginMode ? "Log in" : "Sign up")
                         .font(.system(size: 32, weight: .bold))
                         .foregroundColor(.white)
                     
                     // Login/Register toggle
                     HStack {
-                        Text(isLoginMode ? "Pas de compte ?" : "Déjà un compte ?")
+                        Text(isLoginMode ? "No account?" : "Already have an account?")
                             .foregroundColor(.white)
-                        Button(isLoginMode ? "Inscris-toi" : "Connecte-toi") {
+                        Button(isLoginMode ? "Sign Up" : "Log In") {
                             isLoginMode.toggle()
                         }
                         .foregroundColor(.green)
@@ -77,7 +78,7 @@ struct AuthView: View {
                             HStack {
                                 Image(systemName: "person")
                                     .foregroundColor(.green)
-                                TextField("Nom complet", text: $name, prompt: Text("Nom complet").foregroundColor(.gray))
+                                TextField("Full Name", text: $name, prompt: Text("Full Name").foregroundColor(.gray))
                                     .textContentType(.name)
                                     .foregroundColor(.black)
                             }
@@ -106,9 +107,9 @@ struct AuthView: View {
                                 .foregroundColor(.green)
                             Group {
                                 if showPassword {
-                                    TextField("", text: $password, prompt: Text("Mot de passe").foregroundColor(.gray))
+                                    TextField("", text: $password, prompt: Text("Password").foregroundColor(.gray))
                                 } else {
-                                    SecureField("", text: $password, prompt: Text("Mot de passe").foregroundColor(.gray))
+                                    SecureField("", text: $password, prompt: Text("Password").foregroundColor(.gray))
                                 }
                             }
                             .textContentType(.password)
@@ -141,7 +142,7 @@ struct AuthView: View {
                     // Sign up/Login button
                     Button(action: isLoginMode ? loginButtonTapped : signUpButtonTapped) {
                         ZStack {
-                            Text(isLoginMode ? "Se connecter" : "M'inscrire")
+                            Text(isLoginMode ? "Log in" : "Sign up")
                                 .font(.system(size: 17, weight: .semibold))
                                 .foregroundColor(.black)
                                 .opacity(isLoading ? 0 : 1)
@@ -162,7 +163,7 @@ struct AuthView: View {
                     if let result {
                         switch result {
                         case .success:
-                            Text("Vérifiez votre boîte mail.")
+                            Text("Check your inbox.")
                                 .foregroundColor(.green)
                         case .failure(let error):
                             switch(error){

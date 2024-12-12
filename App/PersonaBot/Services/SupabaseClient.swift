@@ -22,13 +22,13 @@ class SupabaseService {
     }
     
     func isAuthenticated() async -> Bool {
-        guard let jwtToken = KeychainWrapper.standard.string(forKey: "PersonaBotJWTToken") else {
+        guard KeychainWrapper.standard.string(forKey: "PersonaBotJWTToken") != nil else {
             return false
         }
         
         var isAuthenticated = false
         do {
-            try await self.client.auth.user()
+            _ = try await self.client.auth.user()
             isAuthenticated = true
         } catch {
             isAuthenticated = false

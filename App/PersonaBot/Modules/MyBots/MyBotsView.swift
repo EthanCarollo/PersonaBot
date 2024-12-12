@@ -20,7 +20,7 @@ struct MyBotsView: View {
                     HStack {
                         Image(systemName: "magnifyingglass")
                             .foregroundColor(.gray)
-                        TextField("Rechercher un bot...", text: $viewModel.searchText)
+                        TextField("Search a bot...", text: $viewModel.searchText)
                             .foregroundColor(.white)
                     }
                     .padding()
@@ -41,16 +41,17 @@ struct MyBotsView: View {
                                     .font(.system(size: 60))
                                     .foregroundColor(.neonGreen)
                                 
-                                Text("Oh tu n'as pas encore de Bots !")
+                                Text("Oh, you don't have any Bots yet!")
                                     .font(.title2)
                                     .fontWeight(.bold)
                                     .foregroundColor(.white)
                                     .multilineTextAlignment(.center)
-                                
-                                Text("Vas dans 'Explorer' pour pouvoir en ajouter")
+
+                                Text("Go to 'Explore' to add some.")
                                     .font(.body)
                                     .foregroundColor(.gray)
                                     .multilineTextAlignment(.center)
+
                             }
                             .padding(.bottom, 50)
                             .frame(width: geometry.size.width)
@@ -76,7 +77,7 @@ struct MyBotsView: View {
                     }
                 }
             }
-            .navigationBarTitle("Mes Bots", displayMode: .inline)
+            .navigationBarTitle("My Bots", displayMode: .inline)
             .navigationBarItems(trailing: Button("Fermer") {
                 presentationMode.wrappedValue.dismiss()
             })

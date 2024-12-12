@@ -14,11 +14,11 @@ struct NavBar: View {
     var body: some View {
         VStack(spacing: 0) {
             HStack {
-                TabBarButton(imageName: "house", title: "Accueil", isSelected: selectedTab == 0) {
+                TabBarButton(imageName: "house", title: "Home", isSelected: selectedTab == 0) {
                     selectedTab = 0
                 }
                 
-                TabBarButton(imageName: "magnifyingglass", title: "Explorer", isSelected: selectedTab == 1) {
+                TabBarButton(imageName: "magnifyingglass", title: "Explore", isSelected: selectedTab == 1) {
                     selectedTab = 1
                 }
                 
@@ -26,7 +26,7 @@ struct NavBar: View {
                     selectedTab = 2
                 }
                 
-                TabBarButton(imageName: "person", title: "Compte", isSelected: selectedTab == 3) {
+                TabBarButton(imageName: "person", title: "Account", isSelected: selectedTab == 3) {
                     selectedTab = 3
                 }
             }

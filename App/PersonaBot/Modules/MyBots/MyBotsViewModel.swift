@@ -53,7 +53,12 @@ class MyBotsViewModel: ObservableObject {
         DispatchQueue.main.async { [weak self] in
             self?.savedBots.removeAll { $0.id == botId }
         }
-        await SupabaseService.shared.deleteUserSavedBot(botId: botId)
+        let resultBot = await SupabaseService.shared.deleteUserSavedBot(botId: botId)
+        if resultBot == true{
+            print("Can create bot")
+        } else {
+            print("Cannot create bot")
+        }
         await fetchBots(showLoad: false)
     }
 }

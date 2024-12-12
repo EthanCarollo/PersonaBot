@@ -110,7 +110,7 @@ public class BackendService {
         return response.response
     }
     
-    public func createBot(bot: BotCreable) async throws -> String {
+    public func createBot(bot: BotCreable) async throws -> Void {
         let endpoint = "/bot/create"
         guard let url = URL(string: self.backendUrl + endpoint) else {
             throw URLError(.badURL)
@@ -130,8 +130,8 @@ public class BackendService {
         request.httpBody = try JSONEncoder().encode(body)
         
         let (data, _) = try await URLSession.shared.data(for: request)
-        let response = try JSONDecoder().decode(BackendResponse.self, from: data)
-        return response.response
+        _ = try JSONDecoder().decode(BackendResponse.self, from: data)
+        return
     }
 }
 
