@@ -9,18 +9,8 @@ import SwiftKeychainWrapper
 import Supabase
 
 struct AccountView: View {
-    @EnvironmentObject var authViewModel: AuthViewModel
-    @State private var showAuthView = false
-    @State private var username = ""
-    @State private var isUpdatingUsername = false
-    @State private var showUsernameUpdateAlert = false
-    @State private var usernameUpdateMessage = ""
-    @State private var userRole: String = "free"
-    
-    @State private var showMyBotsSheet = false
-    @State private var showCreateBotSheet = false
-    @State private var showSettingsSheet = false
-    
+    @ObservedObject var authViewModel = AuthViewModel.shared
+
     var body: some View {
         ZStack {
             Color.black.edgesIgnoringSafeArea(.all)
@@ -43,7 +33,7 @@ struct AccountView: View {
                                 .fontWeight(.bold)
                                 .foregroundColor(.white)
                             
-                            Text(userRole.capitalizingFirstLetter())
+                            Text(authViewModel.userRole.capitalizingFirstLetter())
                                 .font(.caption)
                                 .fontWeight(.bold)
                                 .foregroundColor(.yellow)
@@ -53,42 +43,41 @@ struct AccountView: View {
                                 .cornerRadius(10)
                         }
                         
-                        TextField("Nom d'utilisateur", text: $username)
+                        TextField("Nom d'utilisateur", text: $authViewModel.username)
                             .foregroundColor(.white)
                             .padding()
                             .background(Color.white.opacity(0.1))
                             .cornerRadius(15)
                             .padding(.horizontal)
                             .onSubmit {
-                                updateUsername()
+                                authViewModel.updateUsername()
                             }
-                        
                     }
                     .padding(.top, 50)
                     
                     VStack(spacing: 15) {
                         AccountOptionButton(icon: "bubble.left.and.bubble.right", text: "Mes Bots", isPro: false, isEnabled: true) {
-                            showMyBotsSheet = true
+                            authViewModel.showMyBotsSheet = true
                         }
-                        AccountOptionButton(icon: "person.badge.plus", text: "Créer un Bot", isPro: true, isEnabled: userRole == "pro") {
+                        AccountOptionButton(icon: "person.badge.plus", text: "Créer un Bot", isPro: true, isEnabled: authViewModel.userRole == "pro") {
                             PostHogService.shared.CaptureEvent(event: "OpenCreateBotView")
-                            showCreateBotSheet = true
+                            authViewModel.showCreateBotSheet = true
                         }
                         AccountOptionButton(icon: "gear", text: "Paramètres", isPro: false, isEnabled: true) {
-                            showSettingsSheet = true
+                            authViewModel.showSettingsSheet = true
                         }
                     }
                     .padding(.top, 30)
                     
                     Spacer()
                 }
-                .sheet(isPresented: $showCreateBotSheet) {
+                .sheet(isPresented: $authViewModel.showCreateBotSheet) {
                     CreateBotView()
                 }
-                .sheet(isPresented: $showMyBotsSheet) {
+                .sheet(isPresented: $authViewModel.showMyBotsSheet) {
                     MyBotsView()
                 }
-                .sheet(isPresented: $showSettingsSheet) {
+                .sheet(isPresented: $authViewModel.showSettingsSheet) {
                     SettingsView()
                         .environmentObject(authViewModel)
                 }
@@ -106,7 +95,7 @@ struct AccountView: View {
                         .multilineTextAlignment(.center)
                         .padding()
                     
-                    Button(action: { showAuthView = true }) {
+                    Button(action: { authViewModel.showAuthView = true }) {
                         Text("Se connecter")
                             .font(.system(size: 17, weight: .semibold))
                             .foregroundColor(.black)
@@ -120,13 +109,13 @@ struct AccountView: View {
                     Spacer()
                 }
                 .padding(.bottom, 100)
-                .sheet(isPresented: $showAuthView) {
+                .sheet(isPresented: $authViewModel.showAuthView, onDismiss: {authViewModel.setUserInformation()}) {
                     AuthView()
                         .environmentObject(authViewModel)
                 }
             }
             
-            if isUpdatingUsername {
+            if authViewModel.isUpdatingUsername {
                 ProgressView()
                     .progressViewStyle(CircularProgressViewStyle(tint: .neonGreen))
                     .scaleEffect(2)
@@ -134,45 +123,12 @@ struct AccountView: View {
         }
         .navigationBarHidden(true)
         .onAppear {
-            setUserInformation()
+            authViewModel.setUserInformation()
         }
-        .alert(isPresented: $showUsernameUpdateAlert) {
+        .alert(isPresented: $authViewModel.showUsernameUpdateAlert) {
             Alert(title: Text("Mise à jour du nom d'utilisateur"),
-                  message: Text(usernameUpdateMessage),
+                  message: Text(authViewModel.usernameUpdateMessage),
                   dismissButton: .default(Text("OK")))
-        }
-    }
-    
-    private func setUserInformation() {
-        Task {
-            let profile = await SupabaseService.shared.getProfile()
-            if let userProfile = profile {
-                DispatchQueue.main.async {
-                    self.username = userProfile.username
-                    self.userRole = userProfile.role
-                }
-            }
-        }
-    }
-    
-    private func updateUsername() {
-        isUpdatingUsername = true
-        Task {
-            do {
-                try await SupabaseService.shared.updateUsername(newUsername: username)
-                DispatchQueue.main.async {
-                    self.isUpdatingUsername = false
-                    self.usernameUpdateMessage = "Nom d'utilisateur mis à jour avec succès"
-                    self.showUsernameUpdateAlert = true
-                }
-            } catch {
-                print("Error updating username: \(error)")
-                DispatchQueue.main.async {
-                    self.isUpdatingUsername = false
-                    self.usernameUpdateMessage = "Erreur lors de la mise à jour du nom d'utilisateur"
-                    self.showUsernameUpdateAlert = true
-                }
-            }
         }
     }
 }

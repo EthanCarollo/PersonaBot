@@ -179,14 +179,19 @@ class SupabaseService {
     }
     
     func getProfile() async -> Profile? {
+        print("Called get profile function")
         do {
             let user = try await self.client.auth.user()
+            print("this is supabase user id : ")
+            print(user.id)
             let profile: [Profile] = try await self.client
               .from("profiles")
               .select("id, username, role")
               .eq("id", value: user.id)
               .execute()
               .value
+            print("this is what supabase returned : ")
+            print(profile)
             return profile.first
         } catch {
             print(error)
@@ -195,30 +200,28 @@ class SupabaseService {
     }
 
     /// Updates the username in the profiles table.
-    func updateUsername(newUsername: String) {
-        Task {
-            struct UpdateProfileParams: Encodable {
-              let username: String
+    func updateUsername(newUsername: String) async throws {
+        struct UpdateProfileParams: Encodable {
+          let username: String
 
-              enum CodingKeys: String, CodingKey {
-                case username
-              }
-            }
-            
-            let updates: UpdateProfileParams = UpdateProfileParams(
-                username: newUsername
-              )
+          enum CodingKeys: String, CodingKey {
+            case username
+          }
+        }
+        
+        let updates: UpdateProfileParams = UpdateProfileParams(
+            username: newUsername
+          )
 
-            do {
-                let currentUser = try await self.client.auth.session.user
-                try await self.client
-                    .from("profiles")
-                    .update(updates)
-                    .eq("id", value: currentUser.id)
-                    .execute()
-            } catch {
-                debugPrint(error)
-            }
+        do {
+            let currentUser = try await self.client.auth.session.user
+            try await self.client
+                .from("profiles")
+                .update(updates)
+                .eq("id", value: currentUser.id)
+                .execute()
+        } catch {
+            debugPrint(error)
         }
     }
 }

@@ -224,7 +224,8 @@ struct AuthView: View {
             
             do {
                 try await SupabaseService.shared.client.auth.signUp(email: email, password: password,
-                                                                    data: ["username": .string(name)])
+                                                                    data: ["username": .string(name)],
+                                                                    redirectTo: URL(string:"com.pragmatiiic.personabot://login-callback"))
                 result = .success(())
             } catch {
                 result = .failure(error)

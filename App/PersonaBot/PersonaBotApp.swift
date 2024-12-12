@@ -28,6 +28,11 @@ struct PersonaBotApp: App {
                     SplashScreen()
                 }
             }
+            .onOpenURL { url in
+                Task {
+                    await handleDeeplink(url: url)
+                }
+            }
             .onAppear(perform: checkAppStatus)
         }
     }
@@ -77,3 +82,16 @@ struct PersonaBotApp: App {
     }
 
     private struct TimeoutError: Error {}}
+
+@MainActor
+func handleDeeplink(url: URL) async {
+    do {
+        try await SupabaseService.shared.client.auth.session(from: url)
+    } catch {
+      print("Fail to init session with url: \(url)")
+    }
+    DispatchQueue.main.async {
+        AuthViewModel.shared.showAuthView = false;
+        AuthViewModel.shared.setUserInformation()
+    }
+}
