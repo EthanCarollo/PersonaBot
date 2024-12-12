@@ -25,7 +25,7 @@ struct PersonaBotApp: App {
                 } else if isCompatible == false {
                     UpdateView()
                 } else {
-                    SplashScreen()
+                    SplashView()
                 }
             }
             .onOpenURL { url in

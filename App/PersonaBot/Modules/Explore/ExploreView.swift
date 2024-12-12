@@ -49,13 +49,7 @@ struct ExploreView: View {
                         LazyVStack(spacing: 16) {
                             ForEach(viewModel.filteredBots) { bot in
                                 BotCard(bot: bot, iconAction: "bookmark", isAuthenticated: viewModel.isAuthenticated, onAction: {
-                                    
-                                    do {
-                                        viewModel.saveBot(bot: bot)
-                                    } catch {
-                                        print(error)
-                                    }
-                                    
+                                    viewModel.saveBot(bot: bot)
                                 })
                             }
                         }
