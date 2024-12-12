@@ -4,7 +4,12 @@
 //
 //  Created by eth on 28/11/2024.
 //
-
+//
+//  AuthView.swift
+//  PersonaBot
+//
+//  Created by eth on 28/11/2024.
+//
 import SwiftUI
 import Supabase
 import SwiftKeychainWrapper
@@ -75,9 +80,10 @@ struct AuthView: View {
                     VStack(spacing: 1) {
                         if !isLoginMode {
                             // Name field
-                            HStack {
+                            HStack(spacing: 15) {
                                 Image(systemName: "person")
                                     .foregroundColor(.green)
+                                    .frame(width: 20)
                                 TextField("Full Name", text: $name, prompt: Text("Full Name").foregroundColor(.gray))
                                     .textContentType(.name)
                                     .foregroundColor(.black)
@@ -88,9 +94,10 @@ struct AuthView: View {
                         }
                         
                         // Email field
-                        HStack {
+                        HStack(spacing: 15) {
                             Image(systemName: "envelope")
                                 .foregroundColor(.green)
+                                .frame(width: 20)
                             TextField("", text: $email, prompt: Text("Email").foregroundColor(.gray))
                                 .textContentType(.emailAddress)
                                 .textInputAutocapitalization(.never)
@@ -102,9 +109,10 @@ struct AuthView: View {
                         .cornerRadius(isLoginMode ? 15 : 0, corners: [.topLeft, .topRight])
                         
                         // Password field
-                        HStack {
+                        HStack(spacing: 15) {
                             Image(systemName: "lock")
                                 .foregroundColor(.green)
+                                .frame(width: 20)
                             Group {
                                 if showPassword {
                                     TextField("", text: $password, prompt: Text("Password").foregroundColor(.gray))
@@ -267,3 +275,4 @@ struct RoundedCorner: Shape {
         return Path(path.cgPath)
     }
 }
+

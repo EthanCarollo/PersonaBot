@@ -28,7 +28,7 @@ struct AccountView: View {
                             .foregroundColor(Color.neonGreen)
                         
                         HStack {
-                            Text("Mon Compte")
+                            Text("My Account")
                                 .font(.title)
                                 .fontWeight(.bold)
                                 .foregroundColor(.white)
@@ -43,7 +43,7 @@ struct AccountView: View {
                                 .cornerRadius(10)
                         }
                         
-                        TextField("Nom d'utilisateur", text: $authViewModel.username)
+                        TextField("Username", text: $authViewModel.username)
                             .foregroundColor(.white)
                             .padding()
                             .background(Color.white.opacity(0.1))
@@ -56,14 +56,14 @@ struct AccountView: View {
                     .padding(.top, 50)
                     
                     VStack(spacing: 15) {
-                        AccountOptionButton(icon: "bubble.left.and.bubble.right", text: "Mes Bots", isPro: false, isEnabled: true) {
+                        AccountOptionButton(icon: "bubble.left.and.bubble.right", text: "My Bots", isPro: false, isEnabled: true) {
                             authViewModel.showMyBotsSheet = true
                         }
-                        AccountOptionButton(icon: "person.badge.plus", text: "Créer un Bot", isPro: true, isEnabled: authViewModel.userRole == "pro") {
+                        AccountOptionButton(icon: "person.badge.plus", text: "Create a Bot", isPro: true, isEnabled: authViewModel.userRole == "pro") {
                             PostHogService.shared.CaptureEvent(event: "OpenCreateBotView")
                             authViewModel.showCreateBotSheet = true
                         }
-                        AccountOptionButton(icon: "gear", text: "Paramètres", isPro: false, isEnabled: true) {
+                        AccountOptionButton(icon: "gear", text: "Settings", isPro: false, isEnabled: true) {
                             authViewModel.showSettingsSheet = true
                         }
                     }
@@ -89,14 +89,14 @@ struct AccountView: View {
                         .font(.system(size: 80))
                         .foregroundColor(Color.neonGreen)
                     
-                    Text("Connectez-vous pour accéder à votre compte")
+                    Text("Log in to access your account")
                         .font(.headline)
                         .foregroundColor(.white)
                         .multilineTextAlignment(.center)
                         .padding()
                     
                     Button(action: { authViewModel.showAuthView = true }) {
-                        Text("Se connecter")
+                        Text("Log In")
                             .font(.system(size: 17, weight: .semibold))
                             .foregroundColor(.black)
                             .frame(maxWidth: .infinity)
@@ -126,7 +126,7 @@ struct AccountView: View {
             authViewModel.setUserInformation()
         }
         .alert(isPresented: $authViewModel.showUsernameUpdateAlert) {
-            Alert(title: Text("Mise à jour du nom d'utilisateur"),
+            Alert(title: Text("Username Update"),
                   message: Text(authViewModel.usernameUpdateMessage),
                   dismissButton: .default(Text("OK")))
         }
@@ -175,3 +175,4 @@ struct AccountOptionButton: View {
         .disabled(!isEnabled)
     }
 }
+
