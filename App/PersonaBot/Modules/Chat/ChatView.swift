@@ -39,7 +39,7 @@ struct ChatView: View {
         ScrollView {
             LazyVStack(spacing: 16) {
                 Text("Select an AI to chat with")
-                    .font(.title)
+                    .font(.system(size: 28, weight: .bold))
                     .foregroundColor(.white)
                     .padding(.top, 32)
                 

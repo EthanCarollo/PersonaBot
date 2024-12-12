@@ -41,16 +41,14 @@ class ChatQueryService:
                 collection_name=self.collection_name,
                 vectors_config=models.VectorParams(size=1536, distance=models.Distance.COSINE),
             )
-        
         self.vector_store = QdrantVectorStore(client=self.client, collection_name=self.collection_name)
         storage_context = StorageContext.from_defaults(vector_store=self.vector_store)
         self.index = VectorStoreIndex([], storage_context=storage_context, dimension=1536)
         memory = ChatMemoryBuffer.from_defaults(token_limit=1500)
         self.chat_engine = self.index.as_chat_engine(
-            chat_mode="context", 
             memory=memory,
-            system_prompt=self.instruction
-    )
+            system_prompt=(self.instruction)
+        )
         
     def get_all_information(self):
         try:
@@ -68,7 +66,9 @@ class ChatQueryService:
         """Perform a simple query and return the results."""
         if not self.chat_engine:
             raise ValueError("Chat engine is not initialized.")
-        return self.chat_engine.chat(chat_str)
+        result = self.chat_engine.chat(chat_str)
+        logger.warning(result)
+        return result
 
     @staticmethod
     def delete_collection(collection_name: str):
