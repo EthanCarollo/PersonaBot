@@ -15,4 +15,5 @@ public struct BotCreable: Identifiable {
     var publicId: String
     var knowledge: [String]
     var icon: String
+    var instruction: String
 }

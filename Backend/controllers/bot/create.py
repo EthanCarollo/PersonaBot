@@ -21,6 +21,7 @@ def add_bot():
     bot_public_id = data.get("botPublicId")
     if not bot_public_id:
         return jsonify({"error": "Missing 'botPublicId'"}), 400
+    bot_public_id = bot_public_id.replace(" ", "").lower()
 
     bot_name = data.get("botName")
 
@@ -30,6 +31,8 @@ def add_bot():
     # this field isnt necessary so i get it and if he is not here, i just don't use it
     bot_description = data.get("description")
 
+    bot_icon = data.get("icon")
+    bot_instruction = data.get("instruction")
     # This is also "unnecessary"
     bot_knowledge = data.get("knowledges")
 
@@ -44,8 +47,8 @@ def add_bot():
         
 
     logger.info("Will create bot with name : '" + bot_name + "' and id : '" + bot_public_id + "'")
-    supabase_client.create_bot(supabase_profile.data["id"], bot_public_id, bot_name, bot_description)
-    chatqueryService : ChatQueryService = ChatQueryService(bot_public_id, supabase_profile.data["id"])
+    supabase_client.create_bot(supabase_profile.data["id"], bot_public_id, bot_name, bot_description, bot_icon, bot_instruction)
+    chatqueryService : ChatQueryService = ChatQueryService(bot_public_id, supabase_profile.data["id"], bot_instruction)
     for knowledge in bot_knowledge:
         chatqueryService.upsert_node(knowledge)
 

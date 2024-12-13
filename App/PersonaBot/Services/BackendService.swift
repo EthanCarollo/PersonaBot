@@ -126,7 +126,7 @@ public class BackendService {
         } catch {
             print("Got an error on get token")
         }
-        let body = BotRequest(botPublicId: bot.publicId, token: token, botName: bot.name, description: bot.description, knowledges: bot.knowledge)
+        let body = BotRequest(botPublicId: bot.publicId, token: token, botName: bot.name, description: bot.description, knowledges: bot.knowledge, icon: bot.icon, instruction: bot.instruction)
         request.httpBody = try JSONEncoder().encode(body)
         
         let (data, _) = try await URLSession.shared.data(for: request)
@@ -141,4 +141,6 @@ struct BotRequest: Encodable {
     let botName: String
     let description: String
     let knowledges: [String]
+    let icon: String
+    let instruction: String
 }

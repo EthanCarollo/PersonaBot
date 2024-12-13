@@ -12,94 +12,26 @@ struct CreateBotView: View {
     @State private var editingKnowledge: String?
     @State private var editingIndex: Int?
     @State private var isSubmitting = false
-    
+    @State private var newKnowledge = ""
+    @State private var isValidPublicId: Bool = true // Added state variable
+
     var body: some View {
         NavigationView {
-            Form {
-                Section {
-                    ScrollView(.horizontal, showsIndicators: false) {
-                        HStack(spacing: 20) {
-                            ForEach(viewModel.icons, id: \.self) { icon in
-                                Image(systemName: icon)
-                                    .font(.system(size: 30))
-                                    .foregroundColor(viewModel.selectedIcon == icon ? .green : .primary)
-                                    .padding(10)
-                                    .background(
-                                        Circle()
-                                            .fill(viewModel.selectedIcon == icon ? Color.green.opacity(0.2) : Color.clear)
-                                    )
-                                    .onTapGesture {
-                                        viewModel.selectedIcon = icon
-                                    }
-                            }
-                        }
-                        .padding(.horizontal)
-                    }
-                    .listRowInsets(EdgeInsets())
-                }
-                
-                Section(header: Text("Bot Information")) {
-                    TextField("Bot Name", text: $viewModel.botName)
-                    TextField("Description", text: $viewModel.botDescription)
-                    TextField("Public Identifier", text: $viewModel.publicId)
-                }
-                
-                Section(header: Text("Knowledge Base")) {
-                    ForEach(viewModel.knowledgeBase.indices, id: \.self) { index in
-                        if editingIndex == index {
-                            TextField("Edit knowledge", text: Binding(
-                                get: { viewModel.knowledgeBase[index] },
-                                set: { viewModel.knowledgeBase[index] = $0 }
-                            ))
-                            .onSubmit {
-                                editingIndex = nil
-                            }
-                        } else {
-                            Text(viewModel.knowledgeBase[index])
-                                .onTapGesture {
-                                    editingIndex = index
-                                }
-                        }
-                    }
-                    .onDelete { indexSet in
-                        viewModel.knowledgeBase.remove(atOffsets: indexSet)
-                        if let firstIndex = indexSet.first, editingIndex == firstIndex {
-                            editingIndex = nil
-                        }
-                    }
+            ScrollView {
+                VStack(spacing: 20) {
+                    iconSelector
                     
-                    HStack {
-                        TextField("Add knowledge", text: .constant(""))
-                            .onSubmit {
-                                let newKnowledge = "New Knowledge Item"
-                                viewModel.knowledgeBase.append(newKnowledge)
-                                editingIndex = viewModel.knowledgeBase.count - 1
-                            }
-                        Button(action: {
-                            let newKnowledge = "New Knowledge Item"
-                            viewModel.knowledgeBase.append(newKnowledge)
-                            editingIndex = viewModel.knowledgeBase.count - 1
-                        }) {
-                            Image(systemName: "plus.circle.fill")
-                        }
-                    }
+                    botInformationSection
+                    
+                    instructionSection
+                    
+                    knowledgeBaseSection
+                    
+                    submitButton
                 }
-                
-                Section {
-                    Button(action: {
-                        submitBot()
-                    }) {
-                        HStack {
-                            Spacer()
-                            Text("Submit")
-                                .fontWeight(.semibold)
-                            Spacer()
-                        }
-                    }
-                    .disabled(!viewModel.isFormValid() || isSubmitting)
-                    .opacity(viewModel.isFormValid() && !isSubmitting ? 1 : 0.6)
-                }
+                .padding()
             }
+            .background(Color(UIColor.systemBackground))
             .navigationTitle("Create Bot")
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
@@ -107,6 +39,7 @@ struct CreateBotView: View {
                     Button("Cancel") {
                         dismiss()
                     }
+                    .foregroundColor(.neonGreen)
                 }
                 
                 ToolbarItem(placement: .navigationBarTrailing) {
@@ -114,10 +47,136 @@ struct CreateBotView: View {
                         submitBot()
                     }
                     .disabled(!viewModel.isFormValid() || isSubmitting)
+                    .foregroundColor(viewModel.isFormValid() && !isSubmitting ? .neonGreen : .gray)
                 }
             }
         }
         .preferredColorScheme(.dark)
+    }
+    
+    private var iconSelector: some View {
+        ScrollView(.horizontal, showsIndicators: false) {
+            HStack(spacing: 20) {
+                ForEach(viewModel.icons, id: \.self) { icon in
+                    Image(systemName: icon)
+                        .font(.system(size: 30))
+                        .foregroundColor(viewModel.selectedIcon == icon ? .neonGreen : .primary)
+                        .padding(10)
+                        .background(
+                            Circle()
+                                .fill(viewModel.selectedIcon == icon ? Color.neonGreen.opacity(0.2) : Color.clear)
+                        )
+                        .onTapGesture {
+                            withAnimation {
+                                viewModel.selectedIcon = icon
+                            }
+                        }
+                }
+            }
+            .padding(.horizontal)
+        }
+    }
+    
+    private var botInformationSection: some View {
+        VStack(alignment: .leading, spacing: 15) {
+            Text("Bot Information")
+                .font(.headline)
+                .foregroundColor(.secondary)
+            
+            CustomTextField(placeholder: "Bot Name", text: $viewModel.botName)
+            CustomTextField(placeholder: "Description", text: $viewModel.botDescription)
+            
+            VStack(alignment: .leading, spacing: 5) {
+                CustomTextField(placeholder: "Public Identifier", text: Binding(
+                    get: { viewModel.publicId },
+                    set: { viewModel.publicId = $0.lowercased().replacingOccurrences(of: " ", with: "") }
+                ))
+                .autocapitalization(.none)
+                .disableAutocorrection(true)
+                
+                if !viewModel.publicId.isEmpty {
+                    if viewModel.isValidPublicId {
+                        Text("Valid public identifier")
+                            .foregroundColor(.neonGreen)
+                            .font(.caption)
+                    } else {
+                        Text("Public identifier should not contain spaces")
+                            .foregroundColor(.red)
+                            .font(.caption)
+                    }
+                }
+            }
+        }
+    }
+    
+    private var instructionSection: some View {
+        VStack(alignment: .leading, spacing: 15) {
+            Text("Instruction")
+                .font(.headline)
+                .foregroundColor(.secondary)
+            
+            CustomTextField(placeholder: "Enter instruction", text: $viewModel.instruction)
+        }
+    }
+    
+    private var knowledgeBaseSection: some View {
+        VStack(alignment: .leading, spacing: 15) {
+            Text("Knowledge Base")
+                .font(.headline)
+                .foregroundColor(.secondary)
+            
+            ForEach(viewModel.knowledgeBase.indices, id: \.self) { index in
+                if editingIndex == index {
+                    CustomTextField(placeholder: "Edit knowledge", text: Binding(
+                        get: { viewModel.knowledgeBase[index] },
+                        set: { viewModel.knowledgeBase[index] = $0 }
+                    ))
+                    .onSubmit {
+                        editingIndex = nil
+                    }
+                } else {
+                    Text(viewModel.knowledgeBase[index])
+                        .padding()
+                        .frame(maxWidth: .infinity, alignment: .leading)
+                        .background(Color(UIColor.secondarySystemBackground))
+                        .cornerRadius(8)
+                        .onTapGesture {
+                            editingIndex = index
+                        }
+                }
+            }
+            
+            HStack {
+                CustomTextField(placeholder: "Add knowledge", text: $newKnowledge)
+                    .onSubmit {
+                        addNewKnowledge()
+                    }
+                Button(action: addNewKnowledge) {
+                    Image(systemName: "plus.circle.fill")
+                        .foregroundColor(.neonGreen)
+                }
+            }
+        }
+    }
+    
+    private var submitButton: some View {
+        Button(action: submitBot) {
+            Text("Submit")
+                .fontWeight(.semibold)
+                .frame(maxWidth: .infinity)
+                .padding()
+                .background(viewModel.isFormValid() && !isSubmitting ? Color.neonGreen : Color.gray)
+                .foregroundColor(.black)
+                .cornerRadius(10)
+        }
+        .disabled(!viewModel.isFormValid() || isSubmitting)
+    }
+    
+    private func addNewKnowledge() {
+        if !newKnowledge.isEmpty {
+            viewModel.knowledgeBase.append(newKnowledge)
+            newKnowledge = ""
+        }
     }
     
     private func submitBot() {
@@ -138,8 +197,21 @@ struct CreateBotView: View {
     }
 }
 
+struct CustomTextField: View {
+    let placeholder: String
+    @Binding var text: String
+    
+    var body: some View {
+        TextField(placeholder, text: $text)
+            .padding()
+            .background(Color(UIColor.secondarySystemBackground))
+            .cornerRadius(8)
+    }
+}
+
 struct CreateBotView_Previews: PreviewProvider {
     static var previews: some View {
         CreateBotView()
     }
 }
+

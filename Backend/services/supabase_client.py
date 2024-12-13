@@ -85,16 +85,19 @@ class SupabaseClient:
             logger.error(e)
             return None
 
-    def create_bot(self, user_id: str, bot_public_id: str, bot_name: str, description: str):
+    def create_bot(self, user_id: str, bot_public_id: str, bot_name: str, description: str, icon: str, instruction: str):
         # When I create a bot, I don't directly insert all Data in QDrant, I do it after cause the logics to talk with
         # ChatQueryService shouldn't be in the SupabaseClient
+        if icon == None :
+            icon = "terminal"
         try :
             return self.client.table('bots').insert({
                 "created_by": user_id,
                 "bot_public_id": bot_public_id,
                 "description": description,
                 "name": bot_name,
-                "icon": "terminal"
+                "icon": icon,
+                "instruction": instruction
             }).execute()
         except Exception as error :
             logger.error(error)
