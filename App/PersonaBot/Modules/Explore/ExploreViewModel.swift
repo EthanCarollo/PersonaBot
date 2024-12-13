@@ -13,7 +13,6 @@ import SwiftKeychainWrapper
 class ExploreViewModel: ObservableObject {
     @Published var searchText: String = ""
     @Published var isAuthenticated: Bool = false
-    @Published var isLoading: Bool = false
     @Published var isCheckingAuth: Bool = false
     
     private var cancellables = Set<AnyCancellable>()
@@ -57,6 +56,9 @@ class ExploreViewModel: ObservableObject {
             BotsViewModel.shared.savedBots = [bot]
         } else {
             BotsViewModel.shared.savedBots.append(bot)
+        }
+        Task {
+            await BotsViewModel.shared.fetchBots()
         }
     }
     

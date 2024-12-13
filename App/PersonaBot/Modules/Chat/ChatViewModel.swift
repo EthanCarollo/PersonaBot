@@ -11,10 +11,10 @@ class ChatViewModel: ObservableObject {
     @Published var messageText = ""
     @Published var messages: [ChatMessage] = []
     @Published var isLoading = false
-    @Published var selectedBot: Bot?
+    @Published var selectedBot: Bot? = nil
     @Published var isSelectingBot = true
+    @Published var canSendMessage: Bool = true
     var scrollProxy: ScrollViewProxy?
-    
     private var cancellables = Set<AnyCancellable>()
     
     deinit {

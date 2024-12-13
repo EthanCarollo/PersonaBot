@@ -12,177 +12,137 @@ struct ChatView: View {
     @State private var keyboardHeight: CGFloat = 0
     
     var body: some View {
-        GeometryReader { geometry in
+        VStack(spacing: 0) {
+            // Safe area top color
+            Color.black
+                .frame(height: 0)
+                .edgesIgnoringSafeArea(.top)
+            
+            // Main content
             VStack(spacing: 0) {
-                if viewModel.isSelectingBot {
-                    botSelectionView
-                } else {
-                    chatView(geometry: geometry)
-                }
-            }
-            .background(Color.black.edgesIgnoringSafeArea(.all))
-            .onChange(of: isFocused) { focused in
-                if focused {
-                    scrollToBottom(delay: 0.5)
-                }
-            }
-            .onAppear {
-                setupKeyboardObservers()
-            }
-            .onDisappear {
-                removeKeyboardObservers()
-            }
-        }
-    }
-    
-    private var botSelectionView: some View {
-        ScrollView {
-            LazyVStack(spacing: 16) {
-                Text("Select an AI to chat with")
-                    .font(.system(size: 28, weight: .bold))
-                    .foregroundColor(.white)
-                    .padding(.top, 32)
-                
-                ForEach(BotsViewModel.shared.savedBots) { bot in
-                    Button(action: {viewModel.selectBot(bot)}){
-                        BotCard(bot: bot, iconAction: "chevron.right", isAuthenticated: true, onAction: {})
-                    }
-                }
-            }
-            .padding()
-        }
-    }
-    
-    private func chatView(geometry: GeometryProxy) -> some View {
-        VStack(spacing: 0) {
-            chatHeader
-            chatMessagesView.padding(.top, 8)
-            messageInputView(geometry: geometry)
-            Spacer(minLength: keyboardHeight > 0 ? keyboardHeight - 4 : 78)
-        }
-    }
-    
-    private var chatHeader: some View {
-        ZStack {
-            HStack {
-                Button(action: {
-                    viewModel.isSelectingBot = true
-                    viewModel.selectedBot = nil
-                    viewModel.messages = []
-                }) {
-                    HStack {
-                        Image(systemName: "chevron.left")
-                            .foregroundColor(.green)
-                        Text("Back")
-                            .foregroundColor(.green)
-                    }
-                }
-                Spacer()
-            }
-            .padding(.horizontal)
-            
-            if let selectedBot = viewModel.selectedBot {
-                Text(selectedBot.name)
-                    .font(.headline)
-                    .foregroundColor(.white)
-            }
-        }
-        .padding(.top, 32)
-        .padding(.bottom, 16)
-        .frame(height: 44)
-        .background(Color.black.opacity(0.8))
-    }
-    
-    private var chatMessagesView: some View {
-        ScrollViewReader { proxy in
-            ScrollView {
-                LazyVStack(spacing: 0) {
-                    ForEach(viewModel.messages) { message in
-                        chatBubble(for: message)
-                            .id(message.id)
+                if viewModel.selectedBot == nil {
+                    // Bot Selection View
+                    VStack(spacing: 0) {
+                        // Header
+                        Text("Select a Bot")
+                            .font(.system(size: 28, weight: .bold))
+                            .foregroundColor(.white)
+                            .frame(maxWidth: .infinity, alignment: .leading)
+                            .padding(.horizontal)
+                            .padding(.top, 16)
                             .padding(.bottom, 20)
+                        
+                        // Bot List
+                        if BotsViewModel.shared.savedBots.isEmpty {
+                            VStack(spacing: 12) {
+                                Spacer()
+                                Text("No bots available")
+                                    .font(.system(size: 16))
+                                    .foregroundColor(.gray)
+                                Text("Add bots from the Explore tab")
+                                    .font(.system(size: 14))
+                                    .foregroundColor(.gray)
+                                Spacer()
+                            }
+                        } else {
+                            ScrollView {
+                                LazyVStack(spacing: 16) {
+                                    ForEach(BotsViewModel.shared.savedBots) { bot in
+                                        BotCard(bot: bot, iconAction: "chevron.right", isAuthenticated: true) {
+                                            withAnimation {
+                                                viewModel.selectBot(bot)
+                                            }
+                                        }
+                                    }
+                                }
+                                .padding(.horizontal)
+                            }
+                        }
                     }
-                    Color.clear.frame(height: 60)
+                } else {
+                    // Chat View
+                    VStack(spacing: 0) {
+                        // Chat Header
+                        HStack {
+                            Button(action: {
+                                withAnimation {
+                                    viewModel.selectedBot = nil
+                                    viewModel.messages = []
+                                }
+                            }) {
+                                Image(systemName: "chevron.left")
+                                    .foregroundColor(.green)
+                                    .imageScale(.large)
+                            }
+                            
+                            Text(viewModel.selectedBot?.name ?? "Chat")
+                                .font(.headline)
+                                .foregroundColor(.white)
+                            
+                            Spacer()
+                        }
+                        .padding()
+                        .background(Color.black)
+                        
+                        // Messages
+                        ScrollViewReader { proxy in
+                            ScrollView {
+                                LazyVStack(spacing: 0) {
+                                    ForEach(viewModel.messages) { message in
+                                        MessageBubble(message: message)
+                                            .id(message.id)
+                                            .padding(.bottom, 16)
+                                    }
+                                }
+                                .padding()
+                            }
+                            .onChange(of: viewModel.messages) { _ in
+                                withAnimation {
+                                    proxy.scrollTo(viewModel.messages.last?.id, anchor: .bottom)
+                                }
+                            }
+                        }
+                        
+                        // Input Area
+                        VStack(spacing: 0) {
+                            Divider()
+                                .background(Color.gray.opacity(0.3))
+                            
+                            HStack(spacing: 12) {
+                                TextField("Type a message...", text: $viewModel.messageText)
+                                    .textFieldStyle(RoundedBorderTextFieldStyle())
+                                    .focused($isFocused)
+                                
+                                Button(action: viewModel.sendMessage) {
+                                    Image(systemName: "arrow.up.circle.fill")
+                                        .font(.system(size: 32))
+                                        .foregroundColor(!viewModel.messageText.isEmpty ? .green : .gray)
+                                }
+                                .disabled(viewModel.messageText.isEmpty)
+                            }
+                            .padding(.horizontal)
+                            .padding(.vertical, 8)
+                            .padding(.bottom, keyboardHeight > 0 ? keyboardHeight : 76)
+                            .background(Color.black)
+                        }
+                    }
                 }
-                .padding()
             }
-            .onChange(of: viewModel.messages) { _ in
-                scrollToBottom()
-            }
-            .onAppear {
-                viewModel.scrollProxy = proxy
-            }
+            .padding(.top, 16)
         }
-    }
-    
-    private func chatBubble(for message: ChatMessage) -> some View {
-        HStack {
-            if message.isUser {
-                Spacer()
-            }
-            Text(message.content)
-                .padding(12)
-                .background(message.isUser ? Color.green.opacity(0.8) : Color.gray)
-                .foregroundColor(.white)
-                .cornerRadius(16)
-            if !message.isUser {
-                Spacer()
-            }
+        .background(Color.black.edgesIgnoringSafeArea(.all))
+        .onAppear {
+            setupKeyboardObservers()
         }
-    }
-    
-    private func messageInputView(geometry: GeometryProxy) -> some View {
-        VStack(spacing: 0) {
-            Rectangle()
-                .fill(Color.gray.opacity(0.2))
-                .frame(height: 1)
-            
-            HStack(spacing: 15) {
-                TextField("Votre message...", text: $viewModel.messageText)
-                    .padding(10)
-                    .background(Color.white.opacity(0.1))
-                    .cornerRadius(20)
-                    .foregroundColor(.white)
-                    .focused($isFocused)
-                
-                sendButton
-            }
-            .padding(.horizontal)
-            .padding(.vertical, 8)
-            .background(Color.black.opacity(0.8))
-        }
-        .padding(.bottom, geometry.safeAreaInsets.bottom)
-    }
-    
-    private var sendButton: some View {
-        Button(action: viewModel.sendMessage) {
-            VStack(spacing: 4) {
-                Image(systemName: "arrow.up.circle.fill")
-                    .font(.system(size: 24))
-                    .foregroundColor(viewModel.isLoading || viewModel.messageText.isEmpty ? .gray : .green)
-                
-                Text("Envoyer")
-                    .font(.caption)
-                    .foregroundColor(viewModel.isLoading || viewModel.messageText.isEmpty ? .gray : .green)
-            }
-        }
-        .disabled(viewModel.isLoading || viewModel.messageText.isEmpty)
-        .frame(width: 60)
-    }
-    
-    private func scrollToBottom(delay: Double = 0) {
-        DispatchQueue.main.asyncAfter(deadline: .now() + delay) {
-            withAnimation {
-                viewModel.scrollProxy?.scrollTo(viewModel.messages.last?.id, anchor: .bottom)
-            }
+        .onDisappear {
+            removeKeyboardObservers()
         }
     }
     
     private func setupKeyboardObservers() {
         NotificationCenter.default.addObserver(forName: UIResponder.keyboardWillShowNotification, object: nil, queue: .main) { notification in
             if let keyboardFrame: NSValue = notification.userInfo?[UIResponder.keyboardFrameEndUserInfoKey] as? NSValue {
-                let keyboardRectangle = keyboardFrame.cgRectValue
-                keyboardHeight = keyboardRectangle.height
+                keyboardHeight = keyboardFrame.cgRectValue.height
             }
         }
         
@@ -197,6 +157,34 @@ struct ChatView: View {
     }
 }
 
+struct MessageBubble: View {
+    let message: ChatMessage
+    
+    var body: some View {
+        HStack {
+            if message.isUser {
+                Spacer()
+            }
+            
+            Text(message.content)
+                .padding(.horizontal, 16)
+                .padding(.vertical, 10)
+                .background(message.isUser ? Color.green : Color.gray.opacity(0.3))
+                .foregroundColor(.white)
+                .cornerRadius(20)
+            
+            if !message.isUser {
+                Spacer()
+            }
+        }
+    }
+}
+
+struct ChatView_Previews: PreviewProvider {
+    static var previews: some View {
+        ChatView()
+    }
+}
 
 
 struct BackendResponse: Codable {

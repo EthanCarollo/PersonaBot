@@ -30,8 +30,10 @@ struct BotCard: View {
                     
                     Text(bot.description ?? "")
                         .font(.system(size: 14))
+                        .frame(maxWidth: .infinity, alignment: .leading)
                         .foregroundColor(.gray)
                         .lineLimit(2)
+                        
                 }
                 
                 Spacer()

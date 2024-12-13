@@ -40,24 +40,16 @@ struct ExploreView: View {
                     .cornerRadius(12)
                     .padding(.horizontal)
                     
-                    if viewModel.isLoading {
-                        ProgressView()
-                            .progressViewStyle(CircularProgressViewStyle())
-                            .scaleEffect(1.5)
-                            .frame(maxWidth: .infinity, maxHeight: .infinity)
-                            .tint(.neonGreen)
-                    } else {
-                        ScrollView {
-                            LazyVStack(spacing: 16) {
-                                ForEach(viewModel.filteredBots) { bot in
-                                    BotCard(bot: bot, iconAction: "bookmark", isAuthenticated: viewModel.isAuthenticated, onAction: {
-                                        viewModel.saveBot(bot: bot)
-                                    })
-                                }
+                    ScrollView {
+                        LazyVStack() {
+                            ForEach(viewModel.filteredBots) { bot in
+                                BotCard(bot: bot, iconAction: "bookmark", isAuthenticated: viewModel.isAuthenticated, onAction: {
+                                    viewModel.saveBot(bot: bot)
+                                }).padding(.bottom, 16)
                             }
-                            .padding(.horizontal)
-                            .padding(.bottom, 72)
                         }
+                        .padding(.horizontal)
+                        .padding(.bottom, 96)
                     }
                 }
             } else {

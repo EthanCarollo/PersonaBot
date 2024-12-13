@@ -54,8 +54,9 @@ struct ContentView: View {
         .onAppear(perform: {
             PostHogService.shared.Setup()
             requestNotificationPermissions()
+            AuthViewModel.shared.setUserInformation()
             Task {
-                await SupabaseService.shared.getBotDiscussion(botPublicId: "cook_bot")
+                await BotsViewModel.shared.fetchBots()
             }
         })
     }

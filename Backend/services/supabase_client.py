@@ -34,6 +34,18 @@ class SupabaseClient:
         except :
             return None
     
+    def get_app_version(self):
+        try :
+            return self.client.table('remote_config').select('*').eq('key', 'version').single().execute()
+        except :
+            return None
+    
+    def get_is_maintenance(self):
+        try :
+            return self.client.table('remote_config').select('*').eq('key', 'backend_maintenance').single().execute()
+        except :
+            return None
+    
     def get_bot_with_public_id(self, bot_id):
         try :
             return self.client.table('bots').select('*').eq('bot_public_id', bot_id).single().execute()

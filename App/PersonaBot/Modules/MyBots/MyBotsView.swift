@@ -71,6 +71,8 @@ struct MyBotsView: View {
                                     }
                                 }
                                 .padding(.horizontal)
+                                .padding(.bottom, 96)
+
                             }
                         }
                     }

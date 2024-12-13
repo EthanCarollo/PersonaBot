@@ -171,8 +171,13 @@ struct AuthView: View {
                     if let result {
                         switch result {
                         case .success:
-                            Text("Check your inbox.")
-                                .foregroundColor(.green)
+                            if isLoginMode {
+                                Text("Successfully logged in.")
+                                    .foregroundColor(.green)
+                            } else {
+                                Text("Check your inbox.")
+                                    .foregroundColor(.green)
+                            }
                         case .failure(let error):
                             switch(error){
                             case AuthError.invalidCredentials :
@@ -245,15 +250,17 @@ struct AuthView: View {
     func loginButtonTapped() {
         Task {
             isLoading = true
-            defer { isLoading = false }
             
             let authenticated = await SupabaseService.shared.login(email: email, password: password)
             if(authenticated == true){
                 result = .success(())
-                authViewModel.isAuthenticated = true
+                await BotsViewModel.shared.fetchBots()
+                authViewModel.setUserInformation()
+                isLoading = false
                 dismiss()
             } else {
                 authViewModel.isAuthenticated = false
+                isLoading = false
                 result = .failure(AuthError.invalidCredentials)
             }
         }
