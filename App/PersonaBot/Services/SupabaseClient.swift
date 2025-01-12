@@ -179,19 +179,14 @@ class SupabaseService {
     }
     
     func getProfile() async -> Profile? {
-        print("Called get profile function")
         do {
             let user = try await self.client.auth.user()
-            print("this is supabase user id : ")
-            print(user.id)
             let profile: [Profile] = try await self.client
               .from("profiles")
               .select("id, username, role")
               .eq("id", value: user.id)
               .execute()
               .value
-            print("this is what supabase returned : ")
-            print(profile)
             return profile.first
         } catch {
             print(error)
