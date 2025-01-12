@@ -15,6 +15,8 @@ This project consists of a mobile application for iOS, developed in Swift, paire
 - **Cloud Synchronization:** Securely store and retrieve bot configurations and knowledge bases from the backend.
 - **Real-Time Interaction:** Test and interact with the bots directly within the app.
 
+> Actually, Config.swift backend url is actually online so you can just launch the application.
+
 ### Python Backend
 - **RAG with OpenAI ChatGPT:** Combines powerful natural language understanding with efficient knowledge retrieval using LlamaIndex.
 - **Dynamic Bot Generation:** Create bots dynamically based on user-defined parameters.
