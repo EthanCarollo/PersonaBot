@@ -29,6 +29,7 @@ public class BackendService {
         
             return response.isAlive
         } catch {
+            print("BACKEND IS UNAVAILABLE")
             return false
         }
     }
